@@ -1,8 +1,7 @@
 //
-//  MyPantryApp.swift
-//  MyPantry
-//
-//  Created by Salvador on 7/16/24.
+//  My Pantry
+//  Created by Chris Salvador on 2024
+//  SWD Creative Labs
 //
 
 import SwiftUI
@@ -11,7 +10,7 @@ import SwiftUI
 struct MyPantryApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            AppView()
         }
     }
 }

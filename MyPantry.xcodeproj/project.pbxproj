@@ -8,17 +8,21 @@
 
 /* Begin PBXBuildFile section */
 		B91161842C47262D005731E0 /* MyPantryApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91161832C47262D005731E0 /* MyPantryApp.swift */; };
-		B91161862C47262D005731E0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91161852C47262D005731E0 /* ContentView.swift */; };
 		B91161882C47262E005731E0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B91161872C47262E005731E0 /* Assets.xcassets */; };
 		B911618B2C47262E005731E0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B911618A2C47262E005731E0 /* Preview Assets.xcassets */; };
+		B91161922C472669005731E0 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = B91161912C472669005731E0 /* .gitignore */; };
+		B91161962C472780005731E0 /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = B91161952C472780005731E0 /* Models */; };
+		B91161992C472903005731E0 /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91161982C472903005731E0 /* AppView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		B91161802C47262D005731E0 /* MyPantry.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyPantry.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B91161832C47262D005731E0 /* MyPantryApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPantryApp.swift; sourceTree = "<group>"; };
-		B91161852C47262D005731E0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B91161872C47262E005731E0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B911618A2C47262E005731E0 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		B91161912C472669005731E0 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		B91161932C4726C3005731E0 /* Models */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Models; sourceTree = "<group>"; };
+		B91161982C472903005731E0 /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -26,6 +30,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B91161962C472780005731E0 /* Models in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -35,8 +40,11 @@
 		B91161772C47262D005731E0 = {
 			isa = PBXGroup;
 			children = (
+				B91161912C472669005731E0 /* .gitignore */,
 				B91161822C47262D005731E0 /* MyPantry */,
+				B91161932C4726C3005731E0 /* Models */,
 				B91161812C47262D005731E0 /* Products */,
+				B91161942C472780005731E0 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -51,8 +59,7 @@
 		B91161822C47262D005731E0 /* MyPantry */ = {
 			isa = PBXGroup;
 			children = (
-				B91161832C47262D005731E0 /* MyPantryApp.swift */,
-				B91161852C47262D005731E0 /* ContentView.swift */,
+				B91161972C4728EF005731E0 /* Main */,
 				B91161872C47262E005731E0 /* Assets.xcassets */,
 				B91161892C47262E005731E0 /* Preview Content */,
 			);
@@ -65,6 +72,22 @@
 				B911618A2C47262E005731E0 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		B91161942C472780005731E0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B91161972C4728EF005731E0 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				B91161832C47262D005731E0 /* MyPantryApp.swift */,
+				B91161982C472903005731E0 /* AppView.swift */,
+			);
+			path = Main;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -83,6 +106,9 @@
 			dependencies = (
 			);
 			name = MyPantry;
+			packageProductDependencies = (
+				B91161952C472780005731E0 /* Models */,
+			);
 			productName = MyPantry;
 			productReference = B91161802C47262D005731E0 /* MyPantry.app */;
 			productType = "com.apple.product-type.application";
@@ -126,6 +152,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B911618B2C47262E005731E0 /* Preview Assets.xcassets in Resources */,
+				B91161922C472669005731E0 /* .gitignore in Resources */,
 				B91161882C47262E005731E0 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -137,8 +164,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B91161862C47262D005731E0 /* ContentView.swift in Sources */,
 				B91161842C47262D005731E0 /* MyPantryApp.swift in Sources */,
+				B91161992C472903005731E0 /* AppView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,6 +302,7 @@
 				DEVELOPMENT_TEAM = XC6U84YX8S;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -304,6 +332,7 @@
 				DEVELOPMENT_TEAM = XC6U84YX8S;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -344,6 +373,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B91161952C472780005731E0 /* Models */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Models;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B91161782C47262D005731E0 /* Project object */;
 }

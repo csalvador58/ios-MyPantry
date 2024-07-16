@@ -1,0 +1,15 @@
+# Xcode
+.DS_Store
+**/.DS_Store
+**/build/
+**/DerivedData/
+
+# User-specific Xcode settings
+**/xcuserdata
+
+# Sensitive data
+**/GoogleService-Info.plist
+
+# Logs and temporary files
+*.log
+*.tmp
