@@ -16,6 +16,10 @@
 		B911619B2C473CAB005731E0 /* ItemListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B911619A2C473CAB005731E0 /* ItemListView.swift */; };
 		B911619D2C473D6A005731E0 /* AddItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B911619C2C473D6A005731E0 /* AddItemView.swift */; };
 		B911619F2C473EDD005731E0 /* AddItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B911619E2C473EDD005731E0 /* AddItemViewModel.swift */; };
+		B9CFB0B42C477E1800178D8A /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CFB0B32C477E1800178D8A /* UserService.swift */; };
+		B9CFB0B82C477E7300178D8A /* ItemManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CFB0B72C477E7300178D8A /* ItemManager.swift */; };
+		B9CFB0BA2C477F6200178D8A /* PantryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CFB0B92C477F6200178D8A /* PantryService.swift */; };
+		B9CFB0BC2C478E6200178D8A /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CFB0BB2C478E6200178D8A /* Config.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +35,10 @@
 		B911619E2C473EDD005731E0 /* AddItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemViewModel.swift; sourceTree = "<group>"; };
 		B91161A02C474482005731E0 /* MyPantry.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MyPantry.entitlements; sourceTree = "<group>"; };
 		B91161A12C475059005731E0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		B9CFB0B32C477E1800178D8A /* UserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
+		B9CFB0B72C477E7300178D8A /* ItemManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemManager.swift; sourceTree = "<group>"; };
+		B9CFB0B92C477F6200178D8A /* PantryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryService.swift; sourceTree = "<group>"; };
+		B9CFB0BB2C478E6200178D8A /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +83,10 @@
 				B911619C2C473D6A005731E0 /* AddItemView.swift */,
 				B911619E2C473EDD005731E0 /* AddItemViewModel.swift */,
 				B911619A2C473CAB005731E0 /* ItemListView.swift */,
+				B9CFB0B32C477E1800178D8A /* UserService.swift */,
+				B9CFB0B92C477F6200178D8A /* PantryService.swift */,
+				B9CFB0B72C477E7300178D8A /* ItemManager.swift */,
+				B9CFB0BB2C478E6200178D8A /* Config.swift */,
 			);
 			path = MyPantry;
 			sourceTree = "<group>";
@@ -179,7 +191,11 @@
 			files = (
 				B911619F2C473EDD005731E0 /* AddItemViewModel.swift in Sources */,
 				B91161842C47262D005731E0 /* MyPantryApp.swift in Sources */,
+				B9CFB0BC2C478E6200178D8A /* Config.swift in Sources */,
+				B9CFB0B82C477E7300178D8A /* ItemManager.swift in Sources */,
+				B9CFB0B42C477E1800178D8A /* UserService.swift in Sources */,
 				B911619B2C473CAB005731E0 /* ItemListView.swift in Sources */,
+				B9CFB0BA2C477F6200178D8A /* PantryService.swift in Sources */,
 				B91161992C472903005731E0 /* AppView.swift in Sources */,
 				B911619D2C473D6A005731E0 /* AddItemView.swift in Sources */,
 			);

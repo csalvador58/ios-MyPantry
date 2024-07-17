@@ -1,20 +1,25 @@
-////
-////  AddItemViewModel.swift
-////  MyPantry
-////
-////  Created by Salvador on 7/16/24.
-////
 //
-//import CloudKit
-//import Foundation
-//import Models
+//  My Pantry
+//  Created by Chris Salvador on 2024
+//  SWD Creative Labs
 //
-//@Observable
-//class AddItemViewModel {
-//    private var db = CKContainer(identifier: "iCloud.com.swdcreativelabs.MyPantry").sharedCloudDatabase
-//    private var itemDictionary: [CKRecord.ID: Item] = [:]
-//    
-//    var myPantry: [Item]
-//    
-//    
-//}
+
+import CloudKit
+import Foundation
+import Models
+
+@Observable
+class AddItemViewModel {
+    private var db = CKContainer(identifier: Config.containerIdentifier).privateCloudDatabase
+    private var itemDictionary: [CKRecord.ID: Item] = [:]
+    
+    var pantryItem: [Item] {
+        itemDictionary.values.compactMap { $0 }
+    }
+    
+    func addItem(to pantryID: String, item: Item) async throws {
+        
+    }
+    
+    
+}

@@ -41,3 +41,13 @@ extension Pantry {
         )
     }
 }
+
+extension Pantry {
+    public var record: CKRecord {
+        let record = CKRecord(recordType: Pantry.type)
+        record[Pantry.CodingKeys.name.rawValue] = name as CKRecordValue
+        record[Pantry.CodingKeys.accessCode.rawValue] = accessCode as CKRecordValue
+        record[Pantry.CodingKeys.ownerId.rawValue] = ownerId as CKRecordValue
+        return record
+    }
+}
