@@ -42,7 +42,7 @@ public struct Item: Identifiable, Equatable, Hashable {
     public var dateLastUpdated: Date
     public var expireDate: Date?
     public var note: String?
-    public var sharedWith: [String]?
+    public var pantryId: String
     public var status: ItemStatus
     
     public static let type = "Item"
@@ -61,7 +61,7 @@ public struct Item: Identifiable, Equatable, Hashable {
         case dateLastUpdated
         case expireDate
         case note
-        case sharedWith
+        case pantryId
         case status
     }
 }
@@ -78,6 +78,7 @@ extension Item {
             let dateAdded = record[Item.CodingKeys.dateAdded.rawValue] as? Date,
             let dateLastUpdated = record[Item.CodingKeys.dateLastUpdated.rawValue] as? Date,
             let statusRawValue = record[Item.CodingKeys.status.rawValue] as? Int,
+            let pantryId = record[Item.CodingKeys.pantryId.rawValue] as? String,
             let status = ItemStatus(rawValue: statusRawValue)
         else {
             return nil
@@ -97,7 +98,7 @@ extension Item {
             dateLastUpdated: dateLastUpdated,
             expireDate: record[Item.CodingKeys.expireDate.rawValue] as? Date,
             note: record[Item.CodingKeys.note.rawValue] as? String,
-            sharedWith: record[Item.CodingKeys.sharedWith.rawValue] as? [String],
+            pantryId: pantryId,
             status: status
         )
     }
@@ -132,9 +133,7 @@ extension Item {
         if let note = note {
             record[Item.CodingKeys.note.rawValue] = note as CKRecordValue
         }
-        if let sharedWith = sharedWith {
-            record[Item.CodingKeys.sharedWith.rawValue] = sharedWith as CKRecordValue
-        }
+        record[Item.CodingKeys.pantryId.rawValue] = pantryId as CKRecordValue
         record[Item.CodingKeys.status.rawValue] = status.rawValue as CKRecordValue
         return record
     }

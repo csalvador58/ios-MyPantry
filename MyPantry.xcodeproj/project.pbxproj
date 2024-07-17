@@ -73,8 +73,8 @@
 				B91161872C47262E005731E0 /* Assets.xcassets */,
 				B91161892C47262E005731E0 /* Preview Content */,
 				B911619C2C473D6A005731E0 /* AddItemView.swift */,
-				B911619A2C473CAB005731E0 /* ItemListView.swift */,
 				B911619E2C473EDD005731E0 /* AddItemViewModel.swift */,
+				B911619A2C473CAB005731E0 /* ItemListView.swift */,
 			);
 			path = MyPantry;
 			sourceTree = "<group>";
