@@ -30,7 +30,7 @@ struct SharedItemManagerKey: EnvironmentKey {
     static let defaultValue = ItemManager(databaseType: .sharedDB)
 }
 
-protocol ItemManagerBaseType {
+protocol ItemManagerType {
     /// Fetches a collection of items, filtered by a pantry id.
     /// - Parameters:
     ///   - pantryId: The id of a pantry collection.
@@ -59,7 +59,7 @@ protocol ItemManagerBaseType {
     func deleteItem(_ item: Item, from pantryId: String) async throws -> [Item]
 }
 
-struct ItemManager {
+struct ItemManager: ItemManagerType  {
     let db: CKDatabase
     
     init(databaseType: DatabaseType) {
