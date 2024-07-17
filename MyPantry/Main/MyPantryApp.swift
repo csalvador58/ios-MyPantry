@@ -4,7 +4,9 @@
 //  SWD Creative Labs
 //
 
+import Models
 import SwiftUI
+import SwiftData
 
 @main
 struct MyPantryApp: App {
@@ -12,5 +14,10 @@ struct MyPantryApp: App {
         WindowGroup {
             AppView()
         }
+        .modelContainer(for: Item.self)
+    }
+    
+    init() {
+        print(URL.applicationSupportDirectory.path(percentEncoded: false))
     }
 }

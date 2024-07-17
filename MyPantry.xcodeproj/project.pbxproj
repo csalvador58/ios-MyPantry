@@ -13,6 +13,9 @@
 		B91161922C472669005731E0 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = B91161912C472669005731E0 /* .gitignore */; };
 		B91161962C472780005731E0 /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = B91161952C472780005731E0 /* Models */; };
 		B91161992C472903005731E0 /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91161982C472903005731E0 /* AppView.swift */; };
+		B911619B2C473CAB005731E0 /* ItemListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B911619A2C473CAB005731E0 /* ItemListView.swift */; };
+		B911619D2C473D6A005731E0 /* AddItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B911619C2C473D6A005731E0 /* AddItemView.swift */; };
+		B911619F2C473EDD005731E0 /* AddItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B911619E2C473EDD005731E0 /* AddItemViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +26,11 @@
 		B91161912C472669005731E0 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		B91161932C4726C3005731E0 /* Models */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Models; sourceTree = "<group>"; };
 		B91161982C472903005731E0 /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
+		B911619A2C473CAB005731E0 /* ItemListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemListView.swift; sourceTree = "<group>"; };
+		B911619C2C473D6A005731E0 /* AddItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemView.swift; sourceTree = "<group>"; };
+		B911619E2C473EDD005731E0 /* AddItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemViewModel.swift; sourceTree = "<group>"; };
+		B91161A02C474482005731E0 /* MyPantry.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MyPantry.entitlements; sourceTree = "<group>"; };
+		B91161A12C475059005731E0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,9 +67,14 @@
 		B91161822C47262D005731E0 /* MyPantry */ = {
 			isa = PBXGroup;
 			children = (
+				B91161A12C475059005731E0 /* Info.plist */,
+				B91161A02C474482005731E0 /* MyPantry.entitlements */,
 				B91161972C4728EF005731E0 /* Main */,
 				B91161872C47262E005731E0 /* Assets.xcassets */,
 				B91161892C47262E005731E0 /* Preview Content */,
+				B911619C2C473D6A005731E0 /* AddItemView.swift */,
+				B911619A2C473CAB005731E0 /* ItemListView.swift */,
+				B911619E2C473EDD005731E0 /* AddItemViewModel.swift */,
 			);
 			path = MyPantry;
 			sourceTree = "<group>";
@@ -164,8 +177,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B911619F2C473EDD005731E0 /* AddItemViewModel.swift in Sources */,
 				B91161842C47262D005731E0 /* MyPantryApp.swift in Sources */,
+				B911619B2C473CAB005731E0 /* ItemListView.swift in Sources */,
 				B91161992C472903005731E0 /* AppView.swift in Sources */,
+				B911619D2C473D6A005731E0 /* AddItemView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -296,12 +312,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = MyPantry/MyPantry.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"MyPantry/Preview Content\"";
 				DEVELOPMENT_TEAM = XC6U84YX8S;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MyPantry/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -326,12 +344,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = MyPantry/MyPantry.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"MyPantry/Preview Content\"";
 				DEVELOPMENT_TEAM = XC6U84YX8S;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MyPantry/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
