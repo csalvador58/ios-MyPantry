@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B90B89762C4895FD00855465 /* SetCKRecords.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90B89752C4895FD00855465 /* SetCKRecords.swift */; };
 		B91161842C47262D005731E0 /* MyPantryApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91161832C47262D005731E0 /* MyPantryApp.swift */; };
 		B91161882C47262E005731E0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B91161872C47262E005731E0 /* Assets.xcassets */; };
 		B911618B2C47262E005731E0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B911618A2C47262E005731E0 /* Preview Assets.xcassets */; };
@@ -23,6 +24,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B90B89752C4895FD00855465 /* SetCKRecords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetCKRecords.swift; sourceTree = "<group>"; };
 		B91161802C47262D005731E0 /* MyPantry.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyPantry.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B91161832C47262D005731E0 /* MyPantryApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPantryApp.swift; sourceTree = "<group>"; };
 		B91161872C47262E005731E0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -53,6 +55,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B90B89742C4895BA00855465 /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				B90B89752C4895FD00855465 /* SetCKRecords.swift */,
+			);
+			path = Helper;
+			sourceTree = "<group>";
+		};
 		B91161772C47262D005731E0 = {
 			isa = PBXGroup;
 			children = (
@@ -83,10 +93,9 @@
 				B911619C2C473D6A005731E0 /* AddItemView.swift */,
 				B911619E2C473EDD005731E0 /* AddItemViewModel.swift */,
 				B911619A2C473CAB005731E0 /* ItemListView.swift */,
-				B9CFB0B32C477E1800178D8A /* UserService.swift */,
-				B9CFB0B92C477F6200178D8A /* PantryService.swift */,
-				B9CFB0B72C477E7300178D8A /* ItemManager.swift */,
 				B9CFB0BB2C478E6200178D8A /* Config.swift */,
+				B90B89742C4895BA00855465 /* Helper */,
+				B9CFB0BD2C47D55100178D8A /* Managers */,
 			);
 			path = MyPantry;
 			sourceTree = "<group>";
@@ -113,6 +122,16 @@
 				B91161982C472903005731E0 /* AppView.swift */,
 			);
 			path = Main;
+			sourceTree = "<group>";
+		};
+		B9CFB0BD2C47D55100178D8A /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				B9CFB0B32C477E1800178D8A /* UserService.swift */,
+				B9CFB0B92C477F6200178D8A /* PantryService.swift */,
+				B9CFB0B72C477E7300178D8A /* ItemManager.swift */,
+			);
+			path = Managers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -196,6 +215,7 @@
 				B9CFB0B42C477E1800178D8A /* UserService.swift in Sources */,
 				B911619B2C473CAB005731E0 /* ItemListView.swift in Sources */,
 				B9CFB0BA2C477F6200178D8A /* PantryService.swift in Sources */,
+				B90B89762C4895FD00855465 /* SetCKRecords.swift in Sources */,
 				B91161992C472903005731E0 /* AppView.swift in Sources */,
 				B911619D2C473D6A005731E0 /* AddItemView.swift in Sources */,
 			);
