@@ -138,3 +138,24 @@ extension Item {
         return record
     }
 }
+
+extension Item {
+    public func recordDictionary() -> [CodingKeys: CKRecordValue?] {
+        return [
+            .name: name as CKRecordValue?,
+            .quantity: quantity as CKRecordValue?,
+            .quantityDesired: quantityDesired as CKRecordValue?,
+            .barcode: barcode as CKRecordValue?,
+            .favorite: favorite as CKRecordValue?,
+            .customContent1: customContent1 as CKRecordValue?,
+            .customContent2: customContent2 as CKRecordValue?,
+            .customContent3: customContent3 as CKRecordValue?,
+            .dateAdded: dateAdded as CKRecordValue?,
+            .dateLastUpdated: dateLastUpdated as CKRecordValue?,
+            .expireDate: expireDate as CKRecordValue?,
+            .note: note as CKRecordValue?,
+            .pantryId: pantryId as CKRecordValue?,
+            .status: status.rawValue as CKRecordValue?
+        ]
+    }
+}

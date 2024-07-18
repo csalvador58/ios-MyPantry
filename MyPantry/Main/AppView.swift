@@ -7,6 +7,8 @@
 import SwiftUI
 
 struct AppView: View {
+    @Environment(\.privateItemManager) var privateItemManager
+    @Environment(\.sharedItemManager) var sharedItemManger
     var body: some View {
         Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
     }

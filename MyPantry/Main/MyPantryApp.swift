@@ -13,8 +13,9 @@ struct MyPantryApp: App {
     var body: some Scene {
         WindowGroup {
             AppView()
+                .environment(\.privateItemManager, ItemManager(databaseType: .privateDB))
+                .environment(\.sharedItemManager, ItemManager(databaseType: .sharedDB))
         }
-        .modelContainer(for: Item.self)
     }
     
     init() {

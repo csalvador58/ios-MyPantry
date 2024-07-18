@@ -12,4 +12,12 @@ public enum ItemManagerError: Error {
     case itemHasNoId
     case failedToSaveItem
     case failedToUpdateItem
+    case failedToSetRecordValues
+}
+
+public enum PantryServiceError: Error {
+    case failedToSavePantry
+    case failedToUpdatePantry
+    case invalidPantryId
+    case failedToSetRecordValues
 }

@@ -1,14 +1,21 @@
 //
-//  ItemManager.swift
-//  MyPantry
-//
-//  Created by Salvador on 7/16/24.
+//  My Pantry
+//  Created by Chris Salvador on 2024
+//  SWD Creative Labs
 //
 
 import Foundation
 import Models
 import CloudKit
 import SwiftUI
+
+struct PrivateItemManagerKey: EnvironmentKey {
+    static let defaultValue = ItemManager(databaseType: .privateDB)
+}
+
+struct SharedItemManagerKey: EnvironmentKey {
+    static let defaultValue = ItemManager(databaseType: .sharedDB)
+}
 
 extension EnvironmentValues {
     var privateItemManager: ItemManager {
@@ -20,14 +27,6 @@ extension EnvironmentValues {
         get { self[SharedItemManagerKey.self] }
         set { self[SharedItemManagerKey.self] = newValue }
     }
-}
-
-struct PrivateItemManagerKey: EnvironmentKey {
-    static let defaultValue = ItemManager(databaseType: .privateDB)
-}
-
-struct SharedItemManagerKey: EnvironmentKey {
-    static let defaultValue = ItemManager(databaseType: .sharedDB)
 }
 
 protocol ItemManagerType {
@@ -42,21 +41,21 @@ protocol ItemManagerType {
     ///   - item: The `Item` object to add.
     ///   - pantryId: The id of the pantry to which the item will be added.
     /// - Returns: An updated array of `Item` objects after the addition.
-    func addItem(_ item: Item, to pantryId: String) async throws -> [Item]
+    func addItem(_ item: Item, to pantryId: String) async throws -> Item
     
     /// Updates an existing item in the specified pantry.
     /// - Parameters:
     ///   - item: The `Item` object to update.
     ///   - pantryId: The id of the pantry containing the item to update.
     /// - Returns: An updated array of `Item` objects after the update.
-    func updateItem(_ item: Item, in pantryId: String) async throws -> [Item]
+    func updateItem(_ item: Item, in pantryId: String) async throws -> Item
     
     /// Deletes an existing item from the specified pantry.
     /// - Parameters:
     ///   - item: The `Item` object to delete.
     ///   - pantryId: The id of the pantry containing the item to delete.
     /// - Returns: An updated array of `Item` objects after the deletion.
-    func deleteItem(_ item: Item, from pantryId: String) async throws -> [Item]
+    func deleteItem(_ item: Item, from pantryId: String) async throws -> Void
 }
 
 struct ItemManager: ItemManagerType  {
@@ -81,7 +80,7 @@ struct ItemManager: ItemManagerType  {
         return records.compactMap { Item(record: $0) }
     }
     
-    func addItem(_ item: Item, to pantryId: String) async throws -> [Item] {
+    func addItem(_ item: Item, to pantryId: String) async throws -> Item {
         var newItem = item
         newItem.pantryId = pantryId
         let record = newItem.record
@@ -92,32 +91,41 @@ struct ItemManager: ItemManagerType  {
         
         var items = try await fetchItems(for: pantryId)
         items.append(savedItem)
-        return items
+        return savedItem
     }
     
-    func updateItem(_ item: Item, in pantryId: String) async throws -> [Item] {
+    func updateItem(_ item: Item, in pantryId: String) async throws -> Item {
         guard let id = item.id else {
             throw ItemManagerError.itemHasNoId
         }
         
+        // Fetch record of item to update
         let record = try await db.record(for: id)
-        record[Item.CodingKeys.name.rawValue] = item.name as CKRecordValue
-        record[Item.CodingKeys.quantity.rawValue] = item.quantity as CKRecordValue
-        // Update other fields similarly...
-        
+        // Convert all item inputs into valid CKRecord types
+        let results = item.recordDictionary().compactMap { (key, value) -> Result<Void, RecordValueError>? in
+            setRecordValue(value, for: key, in: record)
+        }
+        // Check for errors, if any, record is not updated in cloudkit
+        let failures = results.compactMap { result -> RecordValueError? in
+            if case .failure(let error) = result {
+                return error
+            }
+            return nil
+        }
+        if !failures.isEmpty {
+            let errorMessages = failures.map { $0.localizedDescription }.joined(separator: "\n")
+            throw ItemManagerError.failedToSetRecordValues
+        }
+        // Update record in cloud kit and verify
         let updatedRecord = try await db.save(record)
         guard let updatedItem = Item(record: updatedRecord) else {
             throw ItemManagerError.failedToUpdateItem
         }
         
-        var items = try await fetchItems(for: pantryId)
-        if let index = items.firstIndex(where: { $0.id == id }) {
-            items[index] = updatedItem
-        }
-        return items
+        return updatedItem
     }
     
-    func deleteItem(_ item: Item, from pantryId: String) async throws -> [Item] {
+    func deleteItem(_ item: Item, from pantryId: String) async throws -> Void {
         guard let id = item.id else {
             throw ItemManagerError.itemHasNoId
         }
@@ -126,6 +134,6 @@ struct ItemManager: ItemManagerType  {
         
         var items = try await fetchItems(for: pantryId)
         items.removeAll { $0.id == id }
-        return items
+        return
     }
 }
