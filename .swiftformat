@@ -1,0 +1,5 @@
+--indent 4
+--linebreaks lf
+--swiftversion 5
+--disable redundantSelf
+--disable trailingCommas

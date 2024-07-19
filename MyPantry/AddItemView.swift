@@ -8,90 +8,101 @@
 import SwiftUI
 
 struct AddItemView: View {
-    @State private var name: String = ""
-    @State private var barcode: String = ""
-    @State private var isFavorite: Bool = false
-    @State private var expirationDate: Date = Date()
-    @State private var notes: String = ""
-    @State private var hasExpirationDate: Bool = false
-    @State private var searchText: String = ""
-    @State private var searchResults: [String] = ["Apple", "Banana", "Orange", "Grapes", "Mango"]
+    @State private var viewModel = AddItemViewModel()
+    @State private var isDatePickerPresented = false
     @FocusState private var isSearchFocused: Bool
     @FocusState private var isNameFocused: Bool
-    
-    var filteredResults: [String] {
-        if searchText.isEmpty {
-            return []
-        } else {
-            return searchResults.filter { $0.localizedCaseInsensitiveContains(searchText) }
-        }
-    }
-    
+
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: 0) {
                 List {
-                    ForEach(filteredResults, id: \.self) { result in
+                    ForEach(viewModel.filteredResults, id: \.self) { result in
                         Text(result)
                             .onTapGesture {
-                                name = result
-                                searchText = ""
+                                viewModel.name = result
+                                viewModel.searchText = ""
                                 isNameFocused = true
                             }
                     }
                 }
                 .listStyle(.plain)
-                .frame(height: filteredResults.isEmpty ? 0 : nil)
-                
+                .frame(height: viewModel.filteredResults.isEmpty ? 0 : nil)
+
                 Form {
                     Section(header: Text("Details")) {
-                        TextField("Name", text: $name)
+                        TextField("Name", text: $viewModel.name)
                             .focused($isNameFocused)
-                        
-                        TextField("Barcode", text: $barcode)
-                            .keyboardType(.numberPad)
-                        
-                        Toggle("Favorite", isOn: $isFavorite)
-                        
-                        Toggle("Has Expiration Date", isOn: $hasExpirationDate)
-                        
-                        DatePicker("Expiration Date", selection: $expirationDate, displayedComponents: .date)
-                            .disabled(!hasExpirationDate)
-                            .foregroundColor(hasExpirationDate ? .primary : .secondary)
+
+                        HStack {
+                            Text("Quantity: \(viewModel.quantity)")
+                                .font(.headline)
+                                .padding()
+                                .background(Color.gray.opacity(0.1))
+                                .cornerRadius(8)
+                                .onTapGesture {
+                                    viewModel.isPickerVisible = true
+                                }
+
+                            Spacer()
+
+                            Text("Clear")
+                                .onTapGesture {
+                                    viewModel.clearQuantity()
+                                }
+                                .foregroundColor(/*@START_MENU_TOKEN@*/ .blue/*@END_MENU_TOKEN@*/)
+                        }
+
+                        if viewModel.isPickerVisible {
+                            Picker("Quantity", selection: $viewModel.quantity) {
+                                ForEach(viewModel.range, id: \.self) { quantity in
+                                    Text("\(quantity)")
+                                }
+                            }
+                            .pickerStyle(.wheel)
+                            .frame(height: 150)
+                            .onChange(of: viewModel.quantity) {
+                                viewModel.isPickerVisible = false
+                            }
+                        }
+
+                        Toggle("Favorite", isOn: $viewModel.isFavorite)
+                        Toggle("Perishable?", isOn: $viewModel.hasExpirationDate)
+                        if viewModel.hasExpirationDate {
+                            DatePicker(
+                                "Expiration Date",
+                                selection: $viewModel.expirationDate,
+                                displayedComponents: .date
+                            )
+                            .disabled(!viewModel.hasExpirationDate)
+                            .foregroundColor(.red)
+                        }
                     }
-                    
+
                     Section(header: Text("Item Notes")) {
-                        TextEditor(text: $notes)
+                        TextEditor(text: $viewModel.notes)
                             .frame(height: 100)
                     }
                 }
             }
-            .navigationTitle("Add Pantry Item")
-            .navigationBarItems(trailing: Button(action: {
-                saveItem()
-            }) {
-                Text("Save")
-                    .padding(.trailing, -10)
-                Image(systemName: "checkmark")
-                    .foregroundColor(Color(.blue))
-                    .imageScale(.large)
-                    .frame(width: 44, height: 44)
-            })
-            .searchable(text: $searchText, prompt: "Search for items")
+            .navigationTitle("Add Item")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        viewModel.saveItem()
+                    }) {
+                        Text("Save")
+                        Image(systemName: "checkmark")
+                            .foregroundColor(/*@START_MENU_TOKEN@*/ .blue/*@END_MENU_TOKEN@*/)
+                            .imageScale(.large)
+                    }
+                }
+            }
+            .searchable(text: $viewModel.searchText, prompt: "Search for items")
             .focused($isSearchFocused)
         }
     }
-    
-    private func saveItem() {
-        // Implementation for saving the item
-    }
-    
-    private func resetSearch() {
-        
-    }
 }
-
-
 
 #Preview {
     AddItemView()
