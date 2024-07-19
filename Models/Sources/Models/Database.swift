@@ -4,7 +4,6 @@
 //  SWD Creative Labs
 //
 
-
 import Foundation
 
 public enum DatabaseType {

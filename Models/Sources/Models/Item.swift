@@ -4,16 +4,16 @@
 //  SWD Creative Labs
 //
 
-import Foundation
 import CloudKit
+import Foundation
 
 public enum ItemStatus: Int, Codable, Identifiable, CaseIterable {
     case inStock, outOfStock, lowStock, inactive
-    
+
     public var id: Self {
         self
     }
-    
+
     public var descr: String {
         switch self {
         case .inStock:
@@ -44,9 +44,9 @@ public struct Item: Identifiable, Equatable, Hashable {
     public var note: String?
     public var pantryId: String
     public var status: ItemStatus
-    
+
     public static let type = "Item"
-    
+
     public enum CodingKeys: String, CodingKey {
         case id
         case name
@@ -66,8 +66,8 @@ public struct Item: Identifiable, Equatable, Hashable {
     }
 }
 
-extension Item {
-    public init?(record: CKRecord) {
+public extension Item {
+    init?(record: CKRecord) {
         guard
             let name = record[Item.CodingKeys.name.rawValue] as? String,
             let quantity = record[Item.CodingKeys.quantity.rawValue] as? Int,
@@ -83,7 +83,7 @@ extension Item {
         else {
             return nil
         }
-        
+
         self.init(
             id: record.recordID,
             name: name,
@@ -104,8 +104,8 @@ extension Item {
     }
 }
 
-extension Item {
-    public var record: CKRecord {
+public extension Item {
+    var record: CKRecord {
         let record = CKRecord(recordType: Item.type)
         record[Item.CodingKeys.name.rawValue] = name as CKRecordValue
         record[Item.CodingKeys.quantity.rawValue] = quantity as CKRecordValue
@@ -139,8 +139,8 @@ extension Item {
     }
 }
 
-extension Item {
-    public func recordDictionary() -> [CodingKeys: CKRecordValue?] {
+public extension Item {
+    func recordDictionary() -> [CodingKeys: CKRecordValue?] {
         return [
             .name: name as CKRecordValue?,
             .quantity: quantity as CKRecordValue?,
@@ -155,7 +155,7 @@ extension Item {
             .expireDate: expireDate as CKRecordValue?,
             .note: note as CKRecordValue?,
             .pantryId: pantryId as CKRecordValue?,
-            .status: status.rawValue as CKRecordValue?
+            .status: status.rawValue as CKRecordValue?,
         ]
     }
 }

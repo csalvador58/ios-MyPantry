@@ -1,6 +1,6 @@
 //
-//  File.swift
-//  
+//  Error.swift
+//
 //
 //  Created by Salvador on 7/17/24.
 //

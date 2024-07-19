@@ -17,6 +17,8 @@
 		B911619B2C473CAB005731E0 /* ItemListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B911619A2C473CAB005731E0 /* ItemListView.swift */; };
 		B911619D2C473D6A005731E0 /* AddItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B911619C2C473D6A005731E0 /* AddItemView.swift */; };
 		B911619F2C473EDD005731E0 /* AddItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B911619E2C473EDD005731E0 /* AddItemViewModel.swift */; };
+		B99DB73C2C4A121B0050E74B /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = B99DB73B2C4A121B0050E74B /* .swiftlint.yml */; };
+		B99DB73E2C4A12250050E74B /* .swiftformat in Resources */ = {isa = PBXBuildFile; fileRef = B99DB73D2C4A12240050E74B /* .swiftformat */; };
 		B9CFB0B42C477E1800178D8A /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CFB0B32C477E1800178D8A /* UserService.swift */; };
 		B9CFB0B82C477E7300178D8A /* ItemManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CFB0B72C477E7300178D8A /* ItemManager.swift */; };
 		B9CFB0BA2C477F6200178D8A /* PantryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CFB0B92C477F6200178D8A /* PantryService.swift */; };
@@ -37,6 +39,8 @@
 		B911619E2C473EDD005731E0 /* AddItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemViewModel.swift; sourceTree = "<group>"; };
 		B91161A02C474482005731E0 /* MyPantry.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MyPantry.entitlements; sourceTree = "<group>"; };
 		B91161A12C475059005731E0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		B99DB73B2C4A121B0050E74B /* .swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
+		B99DB73D2C4A12240050E74B /* .swiftformat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .swiftformat; sourceTree = "<group>"; };
 		B9CFB0B32C477E1800178D8A /* UserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
 		B9CFB0B72C477E7300178D8A /* ItemManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemManager.swift; sourceTree = "<group>"; };
 		B9CFB0B92C477F6200178D8A /* PantryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryService.swift; sourceTree = "<group>"; };
@@ -66,6 +70,8 @@
 		B91161772C47262D005731E0 = {
 			isa = PBXGroup;
 			children = (
+				B99DB73B2C4A121B0050E74B /* .swiftlint.yml */,
+				B99DB73D2C4A12240050E74B /* .swiftformat */,
 				B91161912C472669005731E0 /* .gitignore */,
 				B91161822C47262D005731E0 /* MyPantry */,
 				B91161932C4726C3005731E0 /* Models */,
@@ -144,6 +150,7 @@
 				B911617C2C47262D005731E0 /* Sources */,
 				B911617D2C47262D005731E0 /* Frameworks */,
 				B911617E2C47262D005731E0 /* Resources */,
+				B99DB7382C4A0E5D0050E74B /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -195,13 +202,37 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B99DB73C2C4A121B0050E74B /* .swiftlint.yml in Resources */,
 				B911618B2C47262E005731E0 /* Preview Assets.xcassets in Resources */,
+				B99DB73E2C4A12250050E74B /* .swiftformat in Resources */,
 				B91161922C472669005731E0 /* .gitignore in Resources */,
 				B91161882C47262E005731E0 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		B99DB7382C4A0E5D0050E74B /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/swiftlint_output",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n  export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B911617C2C47262D005731E0 /* Sources */ = {
@@ -354,6 +385,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"MyPantry/Preview Content\"";
 				DEVELOPMENT_TEAM = XC6U84YX8S;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MyPantry/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
@@ -386,6 +418,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"MyPantry/Preview Content\"";
 				DEVELOPMENT_TEAM = XC6U84YX8S;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MyPantry/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";

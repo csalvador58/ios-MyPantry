@@ -5,8 +5,8 @@
 //
 
 import Models
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 @main
 struct MyPantryApp: App {
@@ -17,7 +17,7 @@ struct MyPantryApp: App {
                 .environment(\.sharedItemManager, ItemManager(databaseType: .sharedDB))
         }
     }
-    
+
     init() {
         print(URL.applicationSupportDirectory.path(percentEncoded: false))
     }

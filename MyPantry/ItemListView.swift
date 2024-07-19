@@ -10,19 +10,15 @@ import SwiftUI
 struct ItemListView: View {
     var body: some View {
         NavigationStack {
-            VStack {
-                
-            }
-            .padding()
-            .navigationTitle("My Pantry")
-            .toolbar {
-                Button {
-                    
-                } label: {
-                    Image(systemName: "plus.circle.fill")
-                        .imageScale(.large)
+            VStack {}
+                .padding()
+                .navigationTitle("My Pantry")
+                .toolbar {
+                    Button {} label: {
+                        Image(systemName: "plus.circle.fill")
+                            .imageScale(.large)
+                    }
                 }
-            }
         }
     }
 }

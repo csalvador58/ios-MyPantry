@@ -4,9 +4,9 @@
 //  SWD Creative Labs
 //
 
+import CloudKit
 import Foundation
 import Models
-import CloudKit
 
 typealias CKRecordValue = __CKRecordObjCValue
 
