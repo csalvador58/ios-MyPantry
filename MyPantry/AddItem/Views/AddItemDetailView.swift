@@ -6,7 +6,7 @@
 
 import SwiftUI
 
-struct AddItemDetailsView: View {
+struct AddItemDetailView: View {
     @Bindable var viewModel: AddItemViewModel
     @FocusState.Binding var isNameFocused: Bool
     @State private var isDatePickerPresented = false

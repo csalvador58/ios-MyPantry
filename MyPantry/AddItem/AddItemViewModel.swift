@@ -10,8 +10,8 @@ import Models
 import Observation
 import SwiftUI
 
-@Observable
-class AddItemViewModel {
+@MainActor
+@Observable class AddItemViewModel {
     var name: String = ""
     var quantity: Int = 0
     var barcode: String = ""

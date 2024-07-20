@@ -6,6 +6,7 @@
 
 import SwiftUI
 
+@MainActor
 struct AddItemView: View {
     @State private var viewModel = AddItemViewModel()
     @FocusState private var isSearchFocused: Bool
@@ -28,7 +29,7 @@ struct AddItemView: View {
                 .frame(height: viewModel.filteredResults.isEmpty ? 0 : nil)
 
                 Form {
-                    AddItemDetailsView(viewModel: viewModel, isNameFocused: $isNameFocused)
+                    AddItemDetailView(viewModel: viewModel, isNameFocused: $isNameFocused)
 
                     Section(header: Text("Item Notes")) {
                         TextEditor(text: $viewModel.notes)
