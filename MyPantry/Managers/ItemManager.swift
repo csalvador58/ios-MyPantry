@@ -59,14 +59,14 @@ protocol ItemManagerType {
 }
 
 struct ItemManager: ItemManagerType {
-    let db: CKDatabase
+    let ckDB: CKDatabase
 
     init(databaseType: DatabaseType) {
         switch databaseType {
         case .privateDB:
-            db = CKContainer(identifier: Config.containerIdentifier).privateCloudDatabase
+            ckDB = CKContainer(identifier: Config.containerIdentifier).privateCloudDatabase
         case .sharedDB:
-            db = CKContainer(identifier: Config.containerIdentifier).sharedCloudDatabase
+            ckDB = CKContainer(identifier: Config.containerIdentifier).sharedCloudDatabase
         }
     }
 
@@ -74,7 +74,7 @@ struct ItemManager: ItemManagerType {
         let predicate = NSPredicate(format: "pantryId == %@", pantryId)
         let query = CKQuery(recordType: Item.type, predicate: predicate)
 
-        let (matchResults, _) = try await db.records(matching: query)
+        let (matchResults, _) = try await ckDB.records(matching: query)
         let records = matchResults.compactMap { try? $0.1.get() }
 
         return records.compactMap { Item(record: $0) }
@@ -84,7 +84,7 @@ struct ItemManager: ItemManagerType {
         var newItem = item
         newItem.pantryId = pantryId
         let record = newItem.record
-        let savedRecord = try await db.save(record)
+        let savedRecord = try await ckDB.save(record)
         guard let savedItem = Item(record: savedRecord) else {
             throw ItemManagerError.failedToSaveItem
         }
@@ -100,7 +100,7 @@ struct ItemManager: ItemManagerType {
         }
 
         // Fetch record of item to update
-        let record = try await db.record(for: id)
+        let record = try await ckDB.record(for: id)
         // Convert all item inputs into valid CKRecord types
         let results = item.recordDictionary().compactMap { key, value -> Result<Void, RecordValueError>? in
             setRecordValue(value, for: key, in: record)
@@ -117,7 +117,7 @@ struct ItemManager: ItemManagerType {
             throw ItemManagerError.failedToSetRecordValues
         }
         // Update record in cloud kit and verify
-        let updatedRecord = try await db.save(record)
+        let updatedRecord = try await ckDB.save(record)
         guard let updatedItem = Item(record: updatedRecord) else {
             throw ItemManagerError.failedToUpdateItem
         }
@@ -130,9 +130,10 @@ struct ItemManager: ItemManagerType {
             throw ItemManagerError.itemHasNoId
         }
 
-        try await db.deleteRecord(withID: id)
+        try await ckDB.deleteRecord(withID: id)
 
         var items = try await fetchItems(for: pantryId)
         items.removeAll { $0.id == id }
+        return
     }
 }
