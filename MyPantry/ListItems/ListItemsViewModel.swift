@@ -11,10 +11,12 @@ import Observation
 
 @Observable class ListItemsViewModel {
     var items: [Item] = []
-    var selectedPantryId: String = ""
+    var selectedPantryId: String = "1234"
     
-    func fetchItems() async {
+    func fetchItems(by pantryId: String) async {
         print("Items fetched")
+        // TODO: fetch from item service
+        self.items = []
     }
     
     func deleteItem(_ item: Item) async {
@@ -25,15 +27,7 @@ import Observation
 class MockListItemsViewModel: ListItemsViewModel {
     override init() {
         super.init()
-        Task { @MainActor in
-            await self.populateMockItems()
-        }
-    }
-    
-    @MainActor
-    private func populateMockItems() async {
         self.items = createMockItems()
-        print("Mock items populated. Count: \(self.items.count)")
     }
     
     private func createMockItems() -> [Item] {
@@ -44,7 +38,7 @@ class MockListItemsViewModel: ListItemsViewModel {
             createMockItem(name: "Eggs", quantity: 12, status: .lowStock, pantryId: "pantry1"),
             createMockItem(name: "Cheese", quantity: 1, status: .outOfStock, pantryId: "pantry1")
         ]
-        print("Created mock items: \(mockItems.count)")
+//        print("Created mock items: \(mockItems.count)")
         return mockItems.compactMap { $0 }
     }
     
@@ -62,12 +56,11 @@ class MockListItemsViewModel: ListItemsViewModel {
         record[Item.CodingKeys.pantryId.rawValue] = pantryId
         
         let item = Item(record: record)
-        print("Created item: \(item != nil ? "success" : "failure") - \(name)")
+//        print("Created item: \(item != nil ? "success" : "failure") - \(name)")
         return item
     }
     
-    override func fetchItems() async {
-        await populateMockItems()
+    override func fetchItems(by pantryId: String) async {
         print("Mock fetchItems called. Item count: \(items.count)")
     }
     

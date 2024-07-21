@@ -27,6 +27,8 @@
 		B9CFB0B82C477E7300178D8A /* ItemManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CFB0B72C477E7300178D8A /* ItemManager.swift */; };
 		B9CFB0BA2C477F6200178D8A /* PantryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CFB0B92C477F6200178D8A /* PantryService.swift */; };
 		B9CFB0BC2C478E6200178D8A /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CFB0BB2C478E6200178D8A /* Config.swift */; };
+		B9DD42F52C4C9DDE00900268 /* ItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9DD42F42C4C9DDE00900268 /* ItemRow.swift */; };
+		B9DD42F72C4CA40600900268 /* ItemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9DD42F62C4CA40600900268 /* ItemDetailView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,6 +55,8 @@
 		B9CFB0B72C477E7300178D8A /* ItemManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemManager.swift; sourceTree = "<group>"; };
 		B9CFB0B92C477F6200178D8A /* PantryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryService.swift; sourceTree = "<group>"; };
 		B9CFB0BB2C478E6200178D8A /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		B9DD42F42C4C9DDE00900268 /* ItemRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemRow.swift; sourceTree = "<group>"; };
+		B9DD42F62C4CA40600900268 /* ItemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -142,6 +146,7 @@
 		B92D1DBD2C4BB8080021C4D4 /* ListItems */ = {
 			isa = PBXGroup;
 			children = (
+				B9DD42F32C4C9DCE00900268 /* Views */,
 				B92D1DBE2C4BB85B0021C4D4 /* ListItemsView.swift */,
 				B92D1DC02C4BB9930021C4D4 /* ListItemsViewModel.swift */,
 			);
@@ -182,6 +187,15 @@
 				B9CFB0B72C477E7300178D8A /* ItemManager.swift */,
 			);
 			path = Managers;
+			sourceTree = "<group>";
+		};
+		B9DD42F32C4C9DCE00900268 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B9DD42F42C4C9DDE00900268 /* ItemRow.swift */,
+				B9DD42F62C4CA40600900268 /* ItemDetailView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -295,6 +309,8 @@
 				B97D5DFB2C4BA89700E4C1F0 /* WelcomeView.swift in Sources */,
 				B9CFB0BA2C477F6200178D8A /* PantryService.swift in Sources */,
 				B90B89762C4895FD00855465 /* SetCKRecords.swift in Sources */,
+				B9DD42F72C4CA40600900268 /* ItemDetailView.swift in Sources */,
+				B9DD42F52C4C9DDE00900268 /* ItemRow.swift in Sources */,
 				B91161992C472903005731E0 /* AppView.swift in Sources */,
 				B911619D2C473D6A005731E0 /* AddItemView.swift in Sources */,
 			);
