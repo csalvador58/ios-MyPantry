@@ -9,14 +9,13 @@ import SwiftUI
 
 @MainActor
 @Observable class WelcomeViewModel {
-    
     var isSignedInToiCloud: Bool = false
     var error: String = ""
-    
+
     init() {
         getiCloudStatus()
     }
-    
+
     private func getiCloudStatus() {
         CKContainer.default().accountStatus { [weak self] returnedStatus, _ in
             guard let self = self else { return }
@@ -38,7 +37,7 @@ import SwiftUI
             }
         }
     }
-    
+
     enum CloudKitError: String, LocalizedError {
         case iCloudAccountUnknown
         case iCloudAccountRestricted
@@ -46,16 +45,14 @@ import SwiftUI
         case iCloudAccountUnavailable
         case iCloudAccountOtherUnknown
     }
-    
-    func getiCloudUser() {
-        
-    }
+
+    func getiCloudUser() {}
 }
 
 @MainActor
 struct WelcomeView: View {
     @State var viewModel = WelcomeViewModel()
-    
+
     var body: some View {
         Text("IS SIGNED IN: \(viewModel.isSignedInToiCloud.description.uppercased())")
         Text("Error: \(viewModel.error)")

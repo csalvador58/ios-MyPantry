@@ -134,6 +134,5 @@ struct ItemManager: ItemManagerType {
 
         var items = try await fetchItems(for: pantryId)
         items.removeAll { $0.id == id }
-        return
     }
 }

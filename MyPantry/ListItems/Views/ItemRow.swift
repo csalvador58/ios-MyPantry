@@ -6,10 +6,9 @@
 import Models
 import SwiftUI
 
-
 struct ItemRow: View {
     let item: Item
-    
+
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
@@ -26,7 +25,7 @@ struct ItemRow: View {
                 .cornerRadius(5)
         }
     }
-    
+
     private func statusColor(for status: ItemStatus) -> Color {
         switch status {
         case .inStock:
@@ -40,4 +39,3 @@ struct ItemRow: View {
         }
     }
 }
-

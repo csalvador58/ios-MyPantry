@@ -6,20 +6,20 @@
 
 import CloudKit
 import Models
-import SwiftUI
 import Observation
+import SwiftUI
 
 @Observable class ListItemsViewModel {
     var items: [Item] = []
     var selectedPantryId: String = "1234"
-    
-    func fetchItems(by pantryId: String) async {
+
+    func fetchItems(by _: String) async {
         print("Items fetched")
         // TODO: fetch from item service
         self.items = []
     }
-    
-    func deleteItem(_ item: Item) async {
+
+    func deleteItem(_: Item) async {
         print("Item deleted")
     }
 }
@@ -29,7 +29,7 @@ class MockListItemsViewModel: ListItemsViewModel {
         super.init()
         self.items = createMockItems()
     }
-    
+
     private func createMockItems() -> [Item] {
         let mockItems = [
             createMockItem(name: "Apples", quantity: 5, status: .inStock, pantryId: "pantry1"),
@@ -41,7 +41,7 @@ class MockListItemsViewModel: ListItemsViewModel {
 //        print("Created mock items: \(mockItems.count)")
         return mockItems.compactMap { $0 }
     }
-    
+
     private func createMockItem(name: String, quantity: Int, status: ItemStatus, pantryId: String) -> Item? {
         let record = CKRecord(recordType: Item.type)
         record[Item.CodingKeys.name.rawValue] = name
@@ -54,16 +54,16 @@ class MockListItemsViewModel: ListItemsViewModel {
         record[Item.CodingKeys.dateLastUpdated.rawValue] = Date()
         record[Item.CodingKeys.status.rawValue] = status.rawValue
         record[Item.CodingKeys.pantryId.rawValue] = pantryId
-        
+
         let item = Item(record: record)
 //        print("Created item: \(item != nil ? "success" : "failure") - \(name)")
         return item
     }
-    
-    override func fetchItems(by pantryId: String) async {
+
+    override func fetchItems(by _: String) async {
         print("Mock fetchItems called. Item count: \(items.count)")
     }
-    
+
     override func deleteItem(_ item: Item) async {
         if let index = items.firstIndex(where: { $0.id?.recordName == item.id?.recordName }) {
             items.remove(at: index)

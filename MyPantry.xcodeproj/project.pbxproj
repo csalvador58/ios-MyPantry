@@ -29,6 +29,7 @@
 		B9CFB0BC2C478E6200178D8A /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CFB0BB2C478E6200178D8A /* Config.swift */; };
 		B9DD42F52C4C9DDE00900268 /* ItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9DD42F42C4C9DDE00900268 /* ItemRow.swift */; };
 		B9DD42F72C4CA40600900268 /* ItemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9DD42F62C4CA40600900268 /* ItemDetailView.swift */; };
+		B9DD42FA2C4CADE800900268 /* ViewItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9DD42F92C4CADE800900268 /* ViewItemView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -57,6 +58,7 @@
 		B9CFB0BB2C478E6200178D8A /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		B9DD42F42C4C9DDE00900268 /* ItemRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemRow.swift; sourceTree = "<group>"; };
 		B9DD42F62C4CA40600900268 /* ItemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailView.swift; sourceTree = "<group>"; };
+		B9DD42F92C4CADE800900268 /* ViewItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewItemView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +110,7 @@
 				B91161972C4728EF005731E0 /* Main */,
 				B97D5DF92C4BA83900E4C1F0 /* Welcome */,
 				B97D5DF52C4B8C9300E4C1F0 /* AddItem */,
+				B9DD42F82C4CADC200900268 /* ViewItem */,
 				B92D1DBD2C4BB8080021C4D4 /* ListItems */,
 				B911619A2C473CAB005731E0 /* ItemListView.swift */,
 				B9CFB0BB2C478E6200178D8A /* Config.swift */,
@@ -196,6 +199,14 @@
 				B9DD42F62C4CA40600900268 /* ItemDetailView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		B9DD42F82C4CADC200900268 /* ViewItem */ = {
+			isa = PBXGroup;
+			children = (
+				B9DD42F92C4CADE800900268 /* ViewItemView.swift */,
+			);
+			path = ViewItem;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -305,6 +316,7 @@
 				B92D1DBF2C4BB85B0021C4D4 /* ListItemsView.swift in Sources */,
 				B9CFB0B82C477E7300178D8A /* ItemManager.swift in Sources */,
 				B9CFB0B42C477E1800178D8A /* UserService.swift in Sources */,
+				B9DD42FA2C4CADE800900268 /* ViewItemView.swift in Sources */,
 				B911619B2C473CAB005731E0 /* ItemListView.swift in Sources */,
 				B97D5DFB2C4BA89700E4C1F0 /* WelcomeView.swift in Sources */,
 				B9CFB0BA2C477F6200178D8A /* PantryService.swift in Sources */,
