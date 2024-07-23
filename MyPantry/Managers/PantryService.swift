@@ -21,8 +21,8 @@ extension EnvironmentValues {
 }
 
 protocol PantryServiceType {
-    func fetchPantry() async throws -> [Pantry]
-    func addPantry(_ pantry: Pantry, owner: String) async throws -> Pantry
+    func fetchPantry(by ownerId: String) async throws -> [Pantry]
+    func addPantry(_ pantry: Pantry, ownerId: String) async throws -> Pantry
     func updatePantry(_ pantry: Pantry) async throws -> Pantry
     func deletePantry(_ pantry: Pantry) async throws
 }
@@ -34,21 +34,27 @@ struct PantryService: PantryServiceType {
         ckDB = CKContainer(identifier: Config.containerIdentifier).privateCloudDatabase
     }
 
-    func fetchPantry() async throws -> [Pantry] {
-        let query = CKQuery(recordType: Pantry.type, predicate: NSPredicate(value: true))
+    func fetchPantry(by ownerId: String) async throws -> [Pantry] {
+        let predicate = NSPredicate(format: "ownerId == %@", ownerId)
+        let query = CKQuery(recordType: Pantry.recordType, predicate: predicate)
+//        let query = CKQuery(recordType: Pantry.type, predicate: NSPredicate(value: true))
 
         let (matchResults, _) = try await ckDB.records(matching: query)
         let records = matchResults.compactMap { try? $0.1.get() }
 
-        return records.compactMap { Pantry(record: $0) }
+        return records.compactMap { Pantry.fromRecord($0) }
     }
 
-    func addPantry(_ pantry: Pantry, owner: String) async throws -> Pantry {
-        var newPantry = pantry
-        newPantry.ownerId = owner
-        let record = newPantry.record
-        let savedRecord = try await ckDB.save(record)
-        guard let savedPantry = Pantry(record: savedRecord) else {
+    func addPantry(_ pantry: Pantry, ownerId: String) async throws -> Pantry {
+        let newPantry = Pantry(
+            id: pantry.id,
+            name: pantry.name,
+            ownerId: pantry.ownerId
+        )
+        
+        let record = newPantry.toRecord()
+        let saveRecord = try await ckDB.save(record)
+        guard let savedPantry = Pantry.fromRecord(saveRecord) else {
             throw PantryServiceError.failedToSavePantry
         }
 
@@ -61,11 +67,13 @@ struct PantryService: PantryServiceType {
         }
 
         let record = try await ckDB.record(for: id)
-        record[Pantry.CodingKeys.name.rawValue] = pantry.name as CKRecordValue
-        record[Pantry.CodingKeys.ownerId.rawValue] = pantry.ownerId as CKRecordValue
-
-        let updatedRecord = try await ckDB.save(record)
-        guard let updatedPantry = Pantry(record: updatedRecord) else {
+        for (key, value) in pantry.toRecord() {
+            record[key] = value
+        }
+        
+        let updateRecord = try await ckDB.save(record)
+        
+        guard let updatedPantry = Pantry.fromRecord(updateRecord) else {
             throw PantryServiceError.failedToUpdatePantry
         }
 

@@ -44,21 +44,23 @@ public struct Item: Identifiable, Equatable, Hashable {
         case id, name, quantity, quantityDesired, barcode, favorite, customContent1, customContent2, customContent3, dateAdded, dateLastUpdated, expireDate, note, pantryId, status
     }
 
-    public init(id: CKRecord.ID? = nil,
-                name: String,
-                quantity: Int,
-                quantityDesired: Int? = nil,
-                barcode: String? = nil,
-                favorite: Bool,
-                customContent1: String? = nil,
-                customContent2: String? = nil,
-                customContent3: String? = nil,
-                dateAdded: Date,
-                dateLastUpdated: Date,
-                expireDate: Date? = nil,
-                note: String? = nil,
-                pantryId: String,
-                status: ItemStatus)
+    public init(
+        id: CKRecord.ID? = nil,
+        name: String,
+        quantity: Int,
+        quantityDesired: Int? = nil,
+        barcode: String? = nil,
+        favorite: Bool,
+        customContent1: String? = nil,
+        customContent2: String? = nil,
+        customContent3: String? = nil,
+        dateAdded: Date,
+        dateLastUpdated: Date,
+        expireDate: Date? = nil,
+        note: String? = nil,
+        pantryId: String,
+        status: ItemStatus
+    )
     {
         self.id = id
         self.name = name

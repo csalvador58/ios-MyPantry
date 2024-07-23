@@ -8,42 +8,44 @@ import CloudKit
 import Foundation
 
 public struct Pantry: Identifiable, Equatable, Hashable {
-    public var id: CKRecord.ID?
-    public var name: String
-    public var ownerId: String
-
-    public static let type = "Pantry"
+    public static let recordType = CKRecord.RecordType("Pantry")
+    
+    public let id: CKRecord.ID?
+    public let name: String
+    public let ownerId: String
 
     public enum CodingKeys: String, CodingKey {
-        case id
-        case name
-        case ownerId
+        case id, name, ownerId
     }
-}
-
-public extension Pantry {
-    init?(record: CKRecord) {
-        guard
-            let name = record[Pantry.CodingKeys.name.rawValue] as? String,
-            let ownerId = record[Pantry.CodingKeys.ownerId.rawValue] as? String
-        else {
-            return nil
-        }
-
-        self.init(
+    
+    public init(
+        id: CKRecord.ID? = nil,
+        name: String,
+        ownerId: String
+    ) {
+        self.id = id
+        self.name = name
+        self.ownerId = ownerId
+    }
+    
+    public func toRecord() -> CKRecord {
+        let record = CKRecord(recordType: Pantry.recordType)
+        record[CodingKeys.name.rawValue] = name
+        record[CodingKeys.ownerId.rawValue] = name
+        return record
+    }
+    
+    public static func fromRecord(_ record: CKRecord) -> Pantry? {
+        guard record.recordType == Pantry.recordType,
+              let name = record[CodingKeys.name.rawValue] as? String,
+              let ownerId = record[CodingKeys.ownerId.rawValue] as? String
+        else { return nil }
+        
+        return Pantry(
             id: record.recordID,
             name: name,
             ownerId: ownerId
         )
-    }
-}
-
-public extension Pantry {
-    var record: CKRecord {
-        let record = CKRecord(recordType: Pantry.type)
-        record[Pantry.CodingKeys.name.rawValue] = name as CKRecordValue
-        record[Pantry.CodingKeys.ownerId.rawValue] = ownerId as CKRecordValue
-        return record
     }
 }
 
