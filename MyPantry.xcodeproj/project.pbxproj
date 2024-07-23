@@ -14,7 +14,6 @@
 		B91161922C472669005731E0 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = B91161912C472669005731E0 /* .gitignore */; };
 		B91161962C472780005731E0 /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = B91161952C472780005731E0 /* Models */; };
 		B91161992C472903005731E0 /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91161982C472903005731E0 /* AppView.swift */; };
-		B911619B2C473CAB005731E0 /* ItemListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B911619A2C473CAB005731E0 /* ItemListView.swift */; };
 		B911619D2C473D6A005731E0 /* AddItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B911619C2C473D6A005731E0 /* AddItemView.swift */; };
 		B911619F2C473EDD005731E0 /* AddItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B911619E2C473EDD005731E0 /* AddItemViewModel.swift */; };
 		B92D1DBF2C4BB85B0021C4D4 /* ListItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B92D1DBE2C4BB85B0021C4D4 /* ListItemsView.swift */; };
@@ -27,6 +26,8 @@
 		B9CFB0B82C477E7300178D8A /* ItemManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CFB0B72C477E7300178D8A /* ItemManager.swift */; };
 		B9CFB0BA2C477F6200178D8A /* PantryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CFB0B92C477F6200178D8A /* PantryService.swift */; };
 		B9CFB0BC2C478E6200178D8A /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CFB0BB2C478E6200178D8A /* Config.swift */; };
+		B9D8A6E62C4F1A6900B27984 /* CloudKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9D8A6E52C4F1A6900B27984 /* CloudKitService.swift */; };
+		B9D8A6E82C4F2F5A00B27984 /* WelcomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9D8A6E72C4F2F5A00B27984 /* WelcomeViewModel.swift */; };
 		B9DD42F52C4C9DDE00900268 /* ItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9DD42F42C4C9DDE00900268 /* ItemRow.swift */; };
 		B9DD42F72C4CA40600900268 /* ItemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9DD42F62C4CA40600900268 /* ItemDetailView.swift */; };
 		B9DD42FA2C4CADE800900268 /* ViewItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9DD42F92C4CADE800900268 /* ViewItemView.swift */; };
@@ -41,7 +42,6 @@
 		B91161912C472669005731E0 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		B91161932C4726C3005731E0 /* Models */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Models; sourceTree = "<group>"; };
 		B91161982C472903005731E0 /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
-		B911619A2C473CAB005731E0 /* ItemListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemListView.swift; sourceTree = "<group>"; };
 		B911619C2C473D6A005731E0 /* AddItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemView.swift; sourceTree = "<group>"; };
 		B911619E2C473EDD005731E0 /* AddItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemViewModel.swift; sourceTree = "<group>"; };
 		B91161A02C474482005731E0 /* MyPantry.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MyPantry.entitlements; sourceTree = "<group>"; };
@@ -56,6 +56,8 @@
 		B9CFB0B72C477E7300178D8A /* ItemManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemManager.swift; sourceTree = "<group>"; };
 		B9CFB0B92C477F6200178D8A /* PantryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryService.swift; sourceTree = "<group>"; };
 		B9CFB0BB2C478E6200178D8A /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		B9D8A6E52C4F1A6900B27984 /* CloudKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitService.swift; sourceTree = "<group>"; };
+		B9D8A6E72C4F2F5A00B27984 /* WelcomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeViewModel.swift; sourceTree = "<group>"; };
 		B9DD42F42C4C9DDE00900268 /* ItemRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemRow.swift; sourceTree = "<group>"; };
 		B9DD42F62C4CA40600900268 /* ItemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailView.swift; sourceTree = "<group>"; };
 		B9DD42F92C4CADE800900268 /* ViewItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewItemView.swift; sourceTree = "<group>"; };
@@ -112,7 +114,6 @@
 				B97D5DF52C4B8C9300E4C1F0 /* AddItem */,
 				B9DD42F82C4CADC200900268 /* ViewItem */,
 				B92D1DBD2C4BB8080021C4D4 /* ListItems */,
-				B911619A2C473CAB005731E0 /* ItemListView.swift */,
 				B9CFB0BB2C478E6200178D8A /* Config.swift */,
 				B90B89742C4895BA00855465 /* Helper */,
 				B9CFB0BD2C47D55100178D8A /* Managers */,
@@ -178,6 +179,7 @@
 			isa = PBXGroup;
 			children = (
 				B97D5DFA2C4BA89700E4C1F0 /* WelcomeView.swift */,
+				B9D8A6E72C4F2F5A00B27984 /* WelcomeViewModel.swift */,
 			);
 			path = Welcome;
 			sourceTree = "<group>";
@@ -188,6 +190,7 @@
 				B9CFB0B32C477E1800178D8A /* UserService.swift */,
 				B9CFB0B92C477F6200178D8A /* PantryService.swift */,
 				B9CFB0B72C477E7300178D8A /* ItemManager.swift */,
+				B9D8A6E52C4F1A6900B27984 /* CloudKitService.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -308,6 +311,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B9D8A6E62C4F1A6900B27984 /* CloudKitService.swift in Sources */,
+				B9D8A6E82C4F2F5A00B27984 /* WelcomeViewModel.swift in Sources */,
 				B97D5DF82C4B8D3800E4C1F0 /* AddItemDetailView.swift in Sources */,
 				B911619F2C473EDD005731E0 /* AddItemViewModel.swift in Sources */,
 				B91161842C47262D005731E0 /* MyPantryApp.swift in Sources */,
@@ -317,7 +322,6 @@
 				B9CFB0B82C477E7300178D8A /* ItemManager.swift in Sources */,
 				B9CFB0B42C477E1800178D8A /* UserService.swift in Sources */,
 				B9DD42FA2C4CADE800900268 /* ViewItemView.swift in Sources */,
-				B911619B2C473CAB005731E0 /* ItemListView.swift in Sources */,
 				B97D5DFB2C4BA89700E4C1F0 /* WelcomeView.swift in Sources */,
 				B9CFB0BA2C477F6200178D8A /* PantryService.swift in Sources */,
 				B90B89762C4895FD00855465 /* SetCKRecords.swift in Sources */,
