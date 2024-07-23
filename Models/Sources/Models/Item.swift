@@ -3,139 +3,128 @@
 //  Created by Chris Salvador on 2024
 //  SWD Creative Labs
 //
-
 import CloudKit
 import Foundation
 
 public enum ItemStatus: Int, Codable, Identifiable, CaseIterable {
     case inStock, outOfStock, lowStock, inactive
 
-    public var id: Self {
-        self
-    }
+    public var id: Self { self }
 
     public var descr: String {
         switch self {
-        case .inStock:
-            return "In Stock"
-        case .outOfStock:
-            return "Out Of Stock"
-        case .lowStock:
-            return "Low Stock"
-        case .inactive:
-            return "Inactive"
+        case .inStock: return "In Stock"
+        case .outOfStock: return "Out Of Stock"
+        case .lowStock: return "Low Stock"
+        case .inactive: return "Inactive"
         }
     }
 }
 
 public struct Item: Identifiable, Equatable, Hashable {
-    public var id: CKRecord.ID?
-    public var name: String
-    public var quantity: Int
-    public var quantityDesired: Int?
-    public var barcode: String?
-    public var favorite: Bool
-    public var customContent1: String?
-    public var customContent2: String?
-    public var customContent3: String?
-    public var dateAdded: Date
-    public var dateLastUpdated: Date
-    public var expireDate: Date?
-    public var note: String?
-    public var pantryId: String
-    public var status: ItemStatus
+    public static let recordType = CKRecord.RecordType("Item")
 
-    public static let type = "Item"
+    public let id: CKRecord.ID?
+    public let name: String
+    public let quantity: Int
+    public let quantityDesired: Int?
+    public let barcode: String?
+    public let favorite: Bool
+    public let customContent1: String?
+    public let customContent2: String?
+    public let customContent3: String?
+    public let dateAdded: Date
+    public let dateLastUpdated: Date
+    public let expireDate: Date?
+    public let note: String?
+    public let pantryId: String
+    public let status: ItemStatus
 
-    public enum CodingKeys: String, CodingKey {
-        case id
-        case name
-        case quantity
-        case quantityDesired
-        case barcode
-        case favorite
-        case customContent1
-        case customContent2
-        case customContent3
-        case dateAdded
-        case dateLastUpdated
-        case expireDate
-        case note
-        case pantryId
-        case status
+    public enum CodingKeys: String {
+        case id, name, quantity, quantityDesired, barcode, favorite, customContent1, customContent2, customContent3, dateAdded, dateLastUpdated, expireDate, note, pantryId, status
     }
-}
 
-public extension Item {
-    init?(record: CKRecord) {
-        guard
-            let name = record[Item.CodingKeys.name.rawValue] as? String,
-            let quantity = record[Item.CodingKeys.quantity.rawValue] as? Int,
-            let favorite = record[Item.CodingKeys.favorite.rawValue] as? Bool,
-            let customContent1 = record[Item.CodingKeys.customContent1.rawValue] as? String,
-            let customContent2 = record[Item.CodingKeys.customContent2.rawValue] as? String,
-            let customContent3 = record[Item.CodingKeys.customContent3.rawValue] as? String,
-            let dateAdded = record[Item.CodingKeys.dateAdded.rawValue] as? Date,
-            let dateLastUpdated = record[Item.CodingKeys.dateLastUpdated.rawValue] as? Date,
-            let statusRawValue = record[Item.CodingKeys.status.rawValue] as? Int,
-            let pantryId = record[Item.CodingKeys.pantryId.rawValue] as? String,
-            let status = ItemStatus(rawValue: statusRawValue)
-        else {
-            return nil
-        }
+    public init(id: CKRecord.ID? = nil,
+                name: String,
+                quantity: Int,
+                quantityDesired: Int? = nil,
+                barcode: String? = nil,
+                favorite: Bool,
+                customContent1: String? = nil,
+                customContent2: String? = nil,
+                customContent3: String? = nil,
+                dateAdded: Date,
+                dateLastUpdated: Date,
+                expireDate: Date? = nil,
+                note: String? = nil,
+                pantryId: String,
+                status: ItemStatus)
+    {
+        self.id = id
+        self.name = name
+        self.quantity = quantity
+        self.quantityDesired = quantityDesired
+        self.barcode = barcode
+        self.favorite = favorite
+        self.customContent1 = customContent1
+        self.customContent2 = customContent2
+        self.customContent3 = customContent3
+        self.dateAdded = dateAdded
+        self.dateLastUpdated = dateLastUpdated
+        self.expireDate = expireDate
+        self.note = note
+        self.pantryId = pantryId
+        self.status = status
+    }
 
-        self.init(
+    public func toRecord() -> CKRecord {
+        let record = CKRecord(recordType: Item.recordType)
+        record[CodingKeys.name.rawValue] = name
+        record[CodingKeys.quantity.rawValue] = quantity
+        record[CodingKeys.quantityDesired.rawValue] = quantityDesired
+        record[CodingKeys.barcode.rawValue] = barcode
+        record[CodingKeys.favorite.rawValue] = favorite
+        record[CodingKeys.customContent1.rawValue] = customContent1
+        record[CodingKeys.customContent2.rawValue] = customContent2
+        record[CodingKeys.customContent3.rawValue] = customContent3
+        record[CodingKeys.dateAdded.rawValue] = dateAdded
+        record[CodingKeys.dateLastUpdated.rawValue] = dateLastUpdated
+        record[CodingKeys.expireDate.rawValue] = expireDate
+        record[CodingKeys.note.rawValue] = note
+        record[CodingKeys.pantryId.rawValue] = pantryId
+        record[CodingKeys.status.rawValue] = status.rawValue
+        return record
+    }
+
+    public static func fromRecord(_ record: CKRecord) -> Item? {
+        guard record.recordType == Item.recordType,
+              let name = record[CodingKeys.name.rawValue] as? String,
+              let quantity = record[CodingKeys.quantity.rawValue] as? Int,
+              let favorite = record[CodingKeys.favorite.rawValue] as? Bool,
+              let dateAdded = record[CodingKeys.dateAdded.rawValue] as? Date,
+              let dateLastUpdated = record[CodingKeys.dateLastUpdated.rawValue] as? Date,
+              let statusRawValue = record[CodingKeys.status.rawValue] as? Int,
+              let pantryId = record[CodingKeys.pantryId.rawValue] as? String,
+              let status = ItemStatus(rawValue: statusRawValue)
+        else { return nil }
+
+        return Item(
             id: record.recordID,
             name: name,
             quantity: quantity,
-            quantityDesired: record[Item.CodingKeys.quantityDesired.rawValue] as? Int,
-            barcode: record[Item.CodingKeys.barcode.rawValue] as? String,
+            quantityDesired: record[CodingKeys.quantityDesired.rawValue] as? Int,
+            barcode: record[CodingKeys.barcode.rawValue] as? String,
             favorite: favorite,
-            customContent1: record[Item.CodingKeys.customContent1.rawValue] as? String,
-            customContent2: record[Item.CodingKeys.customContent2.rawValue] as? String,
-            customContent3: record[Item.CodingKeys.customContent3.rawValue] as? String,
+            customContent1: record[CodingKeys.customContent1.rawValue] as? String,
+            customContent2: record[CodingKeys.customContent2.rawValue] as? String,
+            customContent3: record[CodingKeys.customContent3.rawValue] as? String,
             dateAdded: dateAdded,
             dateLastUpdated: dateLastUpdated,
-            expireDate: record[Item.CodingKeys.expireDate.rawValue] as? Date,
-            note: record[Item.CodingKeys.note.rawValue] as? String,
+            expireDate: record[CodingKeys.expireDate.rawValue] as? Date,
+            note: record[CodingKeys.note.rawValue] as? String,
             pantryId: pantryId,
             status: status
         )
-    }
-}
-
-public extension Item {
-    var record: CKRecord {
-        let record = CKRecord(recordType: Item.type)
-        record[Item.CodingKeys.name.rawValue] = name as CKRecordValue
-        record[Item.CodingKeys.quantity.rawValue] = quantity as CKRecordValue
-        if let quantityDesired = quantityDesired {
-            record[Item.CodingKeys.quantityDesired.rawValue] = quantityDesired as CKRecordValue
-        }
-        if let barcode = barcode {
-            record[Item.CodingKeys.barcode.rawValue] = barcode as CKRecordValue
-        }
-        record[Item.CodingKeys.favorite.rawValue] = favorite as CKRecordValue
-        if let customContent1 = customContent1 {
-            record[Item.CodingKeys.customContent1.rawValue] = customContent1 as CKRecordValue
-        }
-        if let customContent2 = customContent2 {
-            record[Item.CodingKeys.customContent2.rawValue] = customContent2 as CKRecordValue
-        }
-        if let customContent3 = customContent3 {
-            record[Item.CodingKeys.customContent3.rawValue] = customContent3 as CKRecordValue
-        }
-        record[Item.CodingKeys.dateAdded.rawValue] = dateAdded as CKRecordValue
-        record[Item.CodingKeys.dateLastUpdated.rawValue] = dateLastUpdated as CKRecordValue
-        if let expireDate = expireDate {
-            record[Item.CodingKeys.expireDate.rawValue] = expireDate as CKRecordValue
-        }
-        if let note = note {
-            record[Item.CodingKeys.note.rawValue] = note as CKRecordValue
-        }
-        record[Item.CodingKeys.pantryId.rawValue] = pantryId as CKRecordValue
-        record[Item.CodingKeys.status.rawValue] = status.rawValue as CKRecordValue
-        return record
     }
 }
 

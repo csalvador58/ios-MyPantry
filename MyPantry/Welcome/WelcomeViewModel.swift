@@ -6,7 +6,7 @@ import SwiftUI
     var isSignedInToiCloud: Bool = false
     var error: String = ""
     var userName: String?
-    
+
     init() {
         Task {
             await getiCloudStatus()
@@ -15,7 +15,7 @@ import SwiftUI
             }
         }
     }
-    
+
     private func getiCloudStatus() async {
         do {
             let accountStatus = try await CKContainer.default().accountStatus()
@@ -37,7 +37,7 @@ import SwiftUI
             self.error = "An error occurred: \(error.localizedDescription)"
         }
     }
-    
+
     func getiCloudUser() async {
         do {
             let container = CKContainer.default()
@@ -50,7 +50,7 @@ import SwiftUI
             self.error = "Failed to fetch user: \(error.localizedDescription)"
         }
     }
-    
+
     enum CloudKitError: String, LocalizedError {
         case iCloudAccountUnknown
         case iCloudAccountRestricted
@@ -58,6 +58,6 @@ import SwiftUI
         case iCloudAccountUnavailable
         case iCloudAccountOtherUnknown
     }
-    
+
     func getiCloudUser() {}
 }

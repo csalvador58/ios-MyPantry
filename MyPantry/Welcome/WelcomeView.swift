@@ -20,7 +20,7 @@ struct WelcomeView: View {
             } else {
                 Link("Click to Sign In to your iCloud Account", destination: URL(string: "App-Prefs:root=CASTLE")!)
             }
-            
+
             if !viewModel.error.isEmpty {
                 Text("Error: \(viewModel.error)")
                     .foregroundStyle(Color.red)

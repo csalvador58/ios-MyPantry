@@ -12,7 +12,6 @@ protocol CloudKitServiceType {
 }
 
 struct CloudKitService: CloudKitServiceType {
-    
     func getCKStatus() async throws -> CKAccountStatus {
         try await CKContainer.default().accountStatus()
     }

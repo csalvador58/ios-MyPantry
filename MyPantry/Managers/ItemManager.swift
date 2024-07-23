@@ -72,25 +72,28 @@ struct ItemManager: ItemManagerType {
 
     func fetchItems(for pantryId: String) async throws -> [Item] {
         let predicate = NSPredicate(format: "pantryId == %@", pantryId)
-        let query = CKQuery(recordType: Item.type, predicate: predicate)
+        let query = CKQuery(recordType: Item.recordType, predicate: predicate)
 
         let (matchResults, _) = try await ckDB.records(matching: query)
         let records = matchResults.compactMap { try? $0.1.get() }
 
-        return records.compactMap { Item(record: $0) }
+        return records.compactMap { Item.fromRecord($0) }
     }
 
     func addItem(_ item: Item, to pantryId: String) async throws -> Item {
-        var newItem = item
-        newItem.pantryId = pantryId
-        let record = newItem.record
+        let newItem = Item(id: item.id, name: item.name, quantity: item.quantity,
+                           quantityDesired: item.quantityDesired, barcode: item.barcode,
+                           favorite: item.favorite, customContent1: item.customContent1,
+                           customContent2: item.customContent2, customContent3: item.customContent3,
+                           dateAdded: item.dateAdded, dateLastUpdated: item.dateLastUpdated,
+                           expireDate: item.expireDate, note: item.note, pantryId: pantryId,
+                           status: item.status)
+        let record = newItem.toRecord()
         let savedRecord = try await ckDB.save(record)
-        guard let savedItem = Item(record: savedRecord) else {
+        guard let savedItem = Item.fromRecord(savedRecord) else {
             throw ItemManagerError.failedToSaveItem
         }
 
-        var items = try await fetchItems(for: pantryId)
-        items.append(savedItem)
         return savedItem
     }
 
@@ -101,24 +104,14 @@ struct ItemManager: ItemManagerType {
 
         // Fetch record of item to update
         let record = try await ckDB.record(for: id)
-        // Convert all item inputs into valid CKRecord types
-        let results = item.recordDictionary().compactMap { key, value -> Result<Void, RecordValueError>? in
-            setRecordValue(value, for: key, in: record)
+        // Update the record with the new item data
+        for (key, value) in item.toRecord() {
+            record[key] = value
         }
-        // Check for errors, if any, record is not updated in cloudkit
-        let failures = results.compactMap { result -> RecordValueError? in
-            if case let .failure(error) = result {
-                return error
-            }
-            return nil
-        }
-        if !failures.isEmpty {
-            _ = failures.map { $0.localizedDescription }.joined(separator: "\n")
-            throw ItemManagerError.failedToSetRecordValues
-        }
+
         // Update record in cloud kit and verify
         let updatedRecord = try await ckDB.save(record)
-        guard let updatedItem = Item(record: updatedRecord) else {
+        guard let updatedItem = Item.fromRecord(updatedRecord) else {
             throw ItemManagerError.failedToUpdateItem
         }
 

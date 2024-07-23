@@ -38,26 +38,27 @@ class MockListItemsViewModel: ListItemsViewModel {
             createMockItem(name: "Eggs", quantity: 12, status: .lowStock, pantryId: "pantry1"),
             createMockItem(name: "Cheese", quantity: 1, status: .outOfStock, pantryId: "pantry1")
         ]
-//        print("Created mock items: \(mockItems.count)")
-        return mockItems.compactMap { $0 }
+        return mockItems
     }
 
-    private func createMockItem(name: String, quantity: Int, status: ItemStatus, pantryId: String) -> Item? {
-        let record = CKRecord(recordType: Item.type)
-        record[Item.CodingKeys.name.rawValue] = name
-        record[Item.CodingKeys.quantity.rawValue] = quantity
-        record[Item.CodingKeys.favorite.rawValue] = false
-        record[Item.CodingKeys.customContent1.rawValue] = ""
-        record[Item.CodingKeys.customContent2.rawValue] = ""
-        record[Item.CodingKeys.customContent3.rawValue] = ""
-        record[Item.CodingKeys.dateAdded.rawValue] = Date()
-        record[Item.CodingKeys.dateLastUpdated.rawValue] = Date()
-        record[Item.CodingKeys.status.rawValue] = status.rawValue
-        record[Item.CodingKeys.pantryId.rawValue] = pantryId
-
-        let item = Item(record: record)
-//        print("Created item: \(item != nil ? "success" : "failure") - \(name)")
-        return item
+    private func createMockItem(name: String, quantity: Int, status: ItemStatus, pantryId: String) -> Item {
+        return Item(
+            id: CKRecord.ID(recordName: UUID().uuidString),
+            name: name,
+            quantity: quantity,
+            quantityDesired: nil,
+            barcode: nil,
+            favorite: false,
+            customContent1: "",
+            customContent2: "",
+            customContent3: "",
+            dateAdded: Date(),
+            dateLastUpdated: Date(),
+            expireDate: nil,
+            note: nil,
+            pantryId: pantryId,
+            status: status
+        )
     }
 
     override func fetchItems(by _: String) async {
