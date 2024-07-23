@@ -18,6 +18,8 @@
 		B911619F2C473EDD005731E0 /* AddItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B911619E2C473EDD005731E0 /* AddItemViewModel.swift */; };
 		B92D1DBF2C4BB85B0021C4D4 /* ListItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B92D1DBE2C4BB85B0021C4D4 /* ListItemsView.swift */; };
 		B92D1DC12C4BB9930021C4D4 /* ListItemsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B92D1DC02C4BB9930021C4D4 /* ListItemsViewModel.swift */; };
+		B962F4392C503A3100F27159 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B962F4382C503A3100F27159 /* AppTheme.swift */; };
+		B962F43B2C503C1000F27159 /* ThemeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B962F43A2C503C1000F27159 /* ThemeModifier.swift */; };
 		B97D5DF82C4B8D3800E4C1F0 /* AddItemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B97D5DF72C4B8D3800E4C1F0 /* AddItemDetailView.swift */; };
 		B97D5DFB2C4BA89700E4C1F0 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B97D5DFA2C4BA89700E4C1F0 /* WelcomeView.swift */; };
 		B99DB73C2C4A121B0050E74B /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = B99DB73B2C4A121B0050E74B /* .swiftlint.yml */; };
@@ -49,6 +51,8 @@
 		B91161A12C475059005731E0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		B92D1DBE2C4BB85B0021C4D4 /* ListItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListItemsView.swift; sourceTree = "<group>"; };
 		B92D1DC02C4BB9930021C4D4 /* ListItemsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListItemsViewModel.swift; sourceTree = "<group>"; };
+		B962F4382C503A3100F27159 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
+		B962F43A2C503C1000F27159 /* ThemeModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeModifier.swift; sourceTree = "<group>"; };
 		B97D5DF72C4B8D3800E4C1F0 /* AddItemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemDetailView.swift; sourceTree = "<group>"; };
 		B97D5DFA2C4BA89700E4C1F0 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		B99DB73B2C4A121B0050E74B /* .swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
@@ -109,6 +113,7 @@
 		B91161822C47262D005731E0 /* MyPantry */ = {
 			isa = PBXGroup;
 			children = (
+				B962F4372C503A1700F27159 /* Colors */,
 				B91161A12C475059005731E0 /* Info.plist */,
 				B91161A02C474482005731E0 /* MyPantry.entitlements */,
 				B91161972C4728EF005731E0 /* Main */,
@@ -157,6 +162,15 @@
 				B92D1DC02C4BB9930021C4D4 /* ListItemsViewModel.swift */,
 			);
 			path = ListItems;
+			sourceTree = "<group>";
+		};
+		B962F4372C503A1700F27159 /* Colors */ = {
+			isa = PBXGroup;
+			children = (
+				B962F4382C503A3100F27159 /* AppTheme.swift */,
+				B962F43A2C503C1000F27159 /* ThemeModifier.swift */,
+			);
+			path = Colors;
 			sourceTree = "<group>";
 		};
 		B97D5DF52C4B8C9300E4C1F0 /* AddItem */ = {
@@ -331,6 +345,8 @@
 				B9CFB0BC2C478E6200178D8A /* Config.swift in Sources */,
 				B92D1DBF2C4BB85B0021C4D4 /* ListItemsView.swift in Sources */,
 				B9CFB0B82C477E7300178D8A /* ItemManager.swift in Sources */,
+				B962F4392C503A3100F27159 /* AppTheme.swift in Sources */,
+				B962F43B2C503C1000F27159 /* ThemeModifier.swift in Sources */,
 				B9CFB0B42C477E1800178D8A /* UserService.swift in Sources */,
 				B9DD42FA2C4CADE800900268 /* ViewItemView.swift in Sources */,
 				B97D5DFB2C4BA89700E4C1F0 /* WelcomeView.swift in Sources */,
