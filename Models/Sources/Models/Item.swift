@@ -60,8 +60,7 @@ public struct Item: Identifiable, Equatable, Hashable {
         note: String? = nil,
         pantryId: String,
         status: ItemStatus
-    )
-    {
+    ) {
         self.id = id
         self.name = name
         self.quantity = quantity

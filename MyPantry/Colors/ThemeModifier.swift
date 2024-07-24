@@ -8,7 +8,7 @@ import SwiftUI
 
 struct ThemeModifier: ViewModifier {
     let theme: AppTheme
-    
+
     func body(content: Content) -> some View {
         content
             .accentColor(theme.primaryColor)

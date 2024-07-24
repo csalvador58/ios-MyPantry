@@ -20,7 +20,7 @@ struct AppTheme {
     let backgroundColor: Color
     let accent1Color: Color
     let accent2Color: Color
-    
+
     static let `default` = AppTheme(
         primaryColor: .primaryColor,
         secondaryColor: .secondaryColor,

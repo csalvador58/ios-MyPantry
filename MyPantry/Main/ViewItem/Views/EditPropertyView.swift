@@ -10,7 +10,7 @@ import SwiftUI
 struct EditableProperty: Identifiable {
     let id: String
     let name: String
-    
+
     init(_ name: String) {
         self.id = name
         self.name = name
@@ -21,11 +21,11 @@ struct EditPropertyView: View {
     @Binding var item: Item
     let property: String
     @Environment(\.dismiss) private var dismiss
-    
+
     @State private var editedValue: String = ""
     @State private var editedDate: Date = .init()
     @State private var editedBool: Bool = false
-    
+
     private func updateItem() {
         item = Item(
             id: item.id,
@@ -45,7 +45,7 @@ struct EditPropertyView: View {
             status: property == "status" ? (ItemStatus(rawValue: Int(editedValue) ?? item.status.rawValue) ?? item.status) : item.status
         )
     }
-    
+
     private var propertyGetters: [String: () -> Void] {
         [
             "name": { editedValue = item.name },
@@ -63,7 +63,7 @@ struct EditPropertyView: View {
             "status": { editedValue = String(item.status.rawValue) }
         ]
     }
-    
+
     var body: some View {
         NavigationStack {
             Form {
@@ -77,7 +77,7 @@ struct EditPropertyView: View {
             .onAppear { setupInitialValue() }
         }
     }
-    
+
     private var propertyEditView: some View {
         Group {
             switch property {
@@ -101,11 +101,11 @@ struct EditPropertyView: View {
             }
         }
     }
-    
+
     private func setupInitialValue() {
         propertyGetters[property]?()
     }
-    
+
     private func saveChanges() {
         updateItem()
         dismiss()

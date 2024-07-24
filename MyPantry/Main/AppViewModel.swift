@@ -2,7 +2,7 @@ import CloudKit
 import SwiftUI
 
 @MainActor
-@Observable class WelcomeViewModel {
+@Observable class AppViewModel {
     var isSignedInToiCloud: Bool = false
     var error: String = ""
     var userName: String?
@@ -16,7 +16,7 @@ import SwiftUI
         }
     }
 
-    private func getiCloudStatus() async {
+    func getiCloudStatus() async {
         do {
             let accountStatus = try await CKContainer.default().accountStatus()
             switch accountStatus {
@@ -60,4 +60,31 @@ import SwiftUI
     }
 
     func getiCloudUser() {}
+}
+
+class MockAppViewModel: AppViewModel {
+    init(isIcloudEnabled: Bool) {
+        super.init()
+        self.isSignedInToiCloud = isIcloudEnabled
+        if isIcloudEnabled {
+            self.userName = "Mock User"
+        }
+    }
+    override func getiCloudStatus() async {
+        if isSignedInToiCloud {
+            var accountStatus = CKAccountStatus.available
+            self.error = ""
+        } else {
+            var accountStatus = CKAccountStatus.noAccount
+            self.error = CloudKitError.iCloudAccountNotFound.rawValue
+        }
+    }
+    
+    override func getiCloudUser() async {
+        if isSignedInToiCloud {
+            self.userName = "Mock User"
+        } else {
+            self.error = "iCloud account not available in mock."
+        }
+    }
 }

@@ -51,7 +51,7 @@ struct PantryService: PantryServiceType {
             name: pantry.name,
             ownerId: pantry.ownerId
         )
-        
+
         let record = newPantry.toRecord()
         let saveRecord = try await ckDB.save(record)
         guard let savedPantry = Pantry.fromRecord(saveRecord) else {
@@ -70,9 +70,9 @@ struct PantryService: PantryServiceType {
         for (key, value) in pantry.toRecord() {
             record[key] = value
         }
-        
+
         let updateRecord = try await ckDB.save(record)
-        
+
         guard let updatedPantry = Pantry.fromRecord(updateRecord) else {
             throw PantryServiceError.failedToUpdatePantry
         }
