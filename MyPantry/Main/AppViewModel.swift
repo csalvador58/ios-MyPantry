@@ -70,16 +70,17 @@ class MockAppViewModel: AppViewModel {
             self.userName = "Mock User"
         }
     }
+
     override func getiCloudStatus() async {
         if isSignedInToiCloud {
-            var accountStatus = CKAccountStatus.available
+            _ = CKAccountStatus.available
             self.error = ""
         } else {
-            var accountStatus = CKAccountStatus.noAccount
+            _ = CKAccountStatus.noAccount
             self.error = CloudKitError.iCloudAccountNotFound.rawValue
         }
     }
-    
+
     override func getiCloudUser() async {
         if isSignedInToiCloud {
             self.userName = "Mock User"
