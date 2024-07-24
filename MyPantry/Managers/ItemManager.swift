@@ -81,7 +81,7 @@ struct ItemManager: ItemManagerType {
     }
 
     func addItem(_ item: Item, to pantryId: String) async throws -> Item {
-        let newItem = Item(id: item.id, name: item.name, quantity: item.quantity,
+        let newItem = Item(id: CKRecord.ID(recordName: UUID().uuidString), name: item.name, quantity: item.quantity,
                            quantityDesired: item.quantityDesired, barcode: item.barcode,
                            favorite: item.favorite, customContent1: item.customContent1,
                            customContent2: item.customContent2, customContent3: item.customContent3,

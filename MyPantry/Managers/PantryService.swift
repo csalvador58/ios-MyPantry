@@ -47,7 +47,7 @@ struct PantryService: PantryServiceType {
 
     func addPantry(_ pantry: Pantry, ownerId: String) async throws -> Pantry {
         let newPantry = Pantry(
-            id: pantry.id,
+            id: CKRecord.ID(recordName: UUID().uuidString),
             name: pantry.name,
             ownerId: pantry.ownerId
         )
