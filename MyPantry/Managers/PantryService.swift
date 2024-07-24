@@ -62,14 +62,13 @@ struct PantryService: PantryServiceType {
     }
 
     func updatePantry(_ pantry: Pantry) async throws -> Pantry {
-        guard let id = pantry.id else {
-            throw PantryServiceError.invalidPantryId
-        }
+        let recordId = pantry.id
+        let record = try await ckDB.record(for: recordId)
 
-        let record = try await ckDB.record(for: id)
-        for (key, value) in pantry.toRecord() {
-            record[key] = value
-        }
+        record[Pantry.CodingKeys.name.rawValue] = pantry.name
+        record[Pantry.CodingKeys.ownerId.rawValue] = pantry.ownerId
+        record[Pantry.CodingKeys.shareReference.rawValue] = pantry.shareReference
+        record[Pantry.CodingKeys.isShared.rawValue] = pantry.isShared
 
         let updateRecord = try await ckDB.save(record)
 
@@ -81,10 +80,7 @@ struct PantryService: PantryServiceType {
     }
 
     func deletePantry(_ pantry: Pantry) async throws {
-        guard let id = pantry.id else {
-            throw PantryServiceError.invalidPantryId
-        }
-
-        try await ckDB.deleteRecord(withID: id)
+        let recordId = pantry.id
+        try await ckDB.deleteRecord(withID: recordId)
     }
 }

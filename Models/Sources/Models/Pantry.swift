@@ -8,52 +8,55 @@ import CloudKit
 import Foundation
 
 public struct Pantry: Identifiable, Equatable, Hashable {
-    public static let recordType = CKRecord.RecordType("Pantry")
+    public static let recordType = "Pantry"
+    public static let zoneId = CKRecordZone.ID(zoneName: "PantryZone")
 
-    public let id: CKRecord.ID?
-    public let name: String
+    public let id: CKRecord.ID
+    public var name: String
     public let ownerId: String
+    public var shareReference: CKRecord.Reference?
+    public var isShared: Bool
 
-    public enum CodingKeys: String, CodingKey {
-        case id, name, ownerId
+    public enum CodingKeys: String {
+        case name, ownerId, shareReference, isShared
     }
 
     public init(
-        id: CKRecord.ID? = nil,
+        id: CKRecord.ID = CKRecord.ID(zoneID: Pantry.zoneId),
         name: String,
-        ownerId: String
+        ownerId: String,
+        shareReference: CKRecord.Reference? = nil,
+        isShared: Bool = false
     ) {
         self.id = id
         self.name = name
         self.ownerId = ownerId
+        self.shareReference = shareReference
+        self.isShared = isShared
     }
 
     public func toRecord() -> CKRecord {
-        let record = CKRecord(recordType: Pantry.recordType)
+        let record = CKRecord(recordType: Pantry.recordType, recordID: id)
         record[CodingKeys.name.rawValue] = name
-        record[CodingKeys.ownerId.rawValue] = name
+        record[CodingKeys.ownerId.rawValue] = ownerId
+        record[CodingKeys.shareReference.rawValue] = shareReference
+        record[CodingKeys.isShared.rawValue] = isShared
         return record
     }
 
     public static func fromRecord(_ record: CKRecord) -> Pantry? {
         guard record.recordType == Pantry.recordType,
               let name = record[CodingKeys.name.rawValue] as? String,
-              let ownerId = record[CodingKeys.ownerId.rawValue] as? String
+              let ownerId = record[CodingKeys.ownerId.rawValue] as? String,
+              let isShared = record[CodingKeys.isShared.rawValue] as? Bool
         else { return nil }
 
         return Pantry(
             id: record.recordID,
             name: name,
-            ownerId: ownerId
+            ownerId: ownerId,
+            shareReference: record[CodingKeys.shareReference.rawValue] as? CKRecord.Reference,
+            isShared: isShared
         )
-    }
-}
-
-public extension Pantry {
-    func recordDictionary() -> [CodingKeys: CKRecordValue?] {
-        return [
-            .name: name as CKRecordValue?,
-            .ownerId: ownerId as CKRecordValue?,
-        ]
     }
 }

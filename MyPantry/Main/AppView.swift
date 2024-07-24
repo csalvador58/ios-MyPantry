@@ -13,9 +13,10 @@ struct AppView: View {
     @Environment(\.sharedItemManager) var sharedItemManger
     @Environment(\.pantryService) var pantryService
     @State var viewModel = AppViewModel()
-    @State var myPantry: [Pantry] = []
+    @State var myPantries: [Pantry] = []
     @State var isLoading: Bool = false
     @State var error: String?
+    @State var showCreatePantryView: Bool = false
 
     @AppStorage("selectedPantryId") private var selectedPantryId: String?
     @AppStorage("cachedICloudUserId") private var cachedICloudUserId: String?
@@ -28,14 +29,7 @@ struct AppView: View {
                 pantrySelectionView
             }
         } else {
-            VStack {
-                Link("Click to Sign In to your iCloud Account", destination: URL(string: "App-Prefs:root=CASTLE")!)
-
-                if !viewModel.error.isEmpty {
-                    Text("Error: \(viewModel.error)")
-                        .foregroundStyle(Color.red)
-                }
-            }
+            signInView
         }
     }
 
@@ -58,30 +52,40 @@ struct AppView: View {
     }
 
     private var pantrySelectionView: some View {
-        VStack {
-            if isLoading {
-                ProgressView()
-            } else if myPantry.isEmpty {
-                createPantryView
-            } else {
-                List(myPantry) { pantry in
-                    Button(pantry.name) {
-                        selectedPantryId = pantry.id?.recordName
+        NavigationStack {
+            VStack {
+                if isLoading {
+                    ProgressView()
+                } else if myPantries.isEmpty {
+                    VStack {
+                        Text("No pantries found")
+                        Button("Create New Pantry") {
+                            showCreatePantryView = true
+                        }
+                    }
+                } else {
+                    List(myPantries) { pantry in
+                        Button(pantry.name) {
+                            selectedPantryId = pantry.id.recordName
+                        }
                     }
                 }
-            }
 
-            if let error = error {
-                Text("Error: \(error)")
-                    .foregroundColor(.red)
+                if let error = error {
+                    Text("Error: \(error)")
+                        .foregroundStyle(Color.red)
+                }
             }
-        }
-    }
-
-    private var createPantryView: some View {
-        CreatePantryView { newPantry in
-            Task {
-                await createPantry(newPantry)
+            .navigationTitle("Select Pantry")
+            .task {
+                await loadPantries()
+            }
+            .sheet(isPresented: $showCreatePantryView) {
+                CreatePantryView(viewModel: CreatePantryViewModel(), onComplete: { newPantry in
+                    Task {
+                        await createPantry(newPantry)
+                    }
+                })
             }
         }
     }
@@ -101,10 +105,10 @@ struct AppView: View {
         isLoading = true
         error = nil
         do {
-            let ownerId = try await fetchICloudUserId()
-            myPantry = try await pantryService.fetchPantry(by: ownerId)
-            if let firstPantry = myPantry.first {
-                selectedPantryId = firstPantry.id?.recordName
+            let ownerId = try await getICloudUserId()
+            myPantries = try await pantryService.fetchPantry(by: ownerId)
+            if myPantries.isEmpty {
+                showCreatePantryView = true
             }
         } catch {
             self.error = error.localizedDescription
@@ -116,24 +120,21 @@ struct AppView: View {
         isLoading = true
         error = nil
         do {
-            let ownerId = try await fetchICloudUserId()
+            let ownerId = try await getICloudUserId()
             let newPantryWithOwner = Pantry(
                 id: pantry.id,
                 name: pantry.name,
-                ownerId: ownerId
+                ownerId: ownerId,
+                isShared: pantry.isShared
             )
             let newPantry = try await pantryService.addPantry(newPantryWithOwner, ownerId: ownerId)
-            myPantry.append(newPantry)
-            selectedPantryId = newPantry.id?.recordName
+            myPantries.append(newPantry)
+            selectedPantryId = newPantry.id.recordName
+            showCreatePantryView = false
         } catch {
             self.error = error.localizedDescription
         }
         isLoading = false
-    }
-
-    private func fetchICloudUserId() async throws -> String {
-        let container = CKContainer(identifier: Config.containerIdentifier)
-        return try await container.userRecordID().recordName
     }
 
     private func getICloudUserId() async throws -> String {
@@ -144,21 +145,10 @@ struct AppView: View {
         cachedICloudUserId = newId
         return newId
     }
-}
 
-struct CreatePantryView: View {
-    @State private var pantryName = ""
-    var onCreatePantry: (Pantry) -> Void
-
-    var body: some View {
-        Form {
-            TextField("Pantry Name", text: $pantryName)
-            Button("Create Pantry") {
-                let newPantry = Pantry(name: pantryName, ownerId: "") // Empty string for ownerId
-                onCreatePantry(newPantry)
-            }
-            .disabled(pantryName.isEmpty)
-        }
+    private func fetchICloudUserId() async throws -> String {
+        let container = CKContainer(identifier: Config.containerIdentifier)
+        return try await container.userRecordID().recordName
     }
 }
 
