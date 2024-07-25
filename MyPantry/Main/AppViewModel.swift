@@ -1,4 +1,5 @@
 import CloudKit
+import Models
 import SwiftUI
 
 @MainActor
@@ -6,6 +7,9 @@ import SwiftUI
     var isSignedInToiCloud: Bool = false
     var error: String = ""
     var userName: String?
+    var isLoading: Bool = false
+    var myPantries: [Pantry] = []
+    var showCreatePantryView: Bool = false
 
     init() {
         Task {
