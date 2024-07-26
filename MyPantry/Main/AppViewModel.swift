@@ -22,23 +22,9 @@ import SwiftUI
 
     func getiCloudStatus() async {
         do {
-            let accountStatus = try await CKContainer.default().accountStatus()
-            switch accountStatus {
-            case .available:
-                self.isSignedInToiCloud = true
-            case .couldNotDetermine:
-                self.error = CloudKitError.iCloudAccountUnknown.rawValue
-            case .restricted:
-                self.error = CloudKitError.iCloudAccountRestricted.rawValue
-            case .noAccount:
-                self.error = CloudKitError.iCloudAccountNotFound.rawValue
-            case .temporarilyUnavailable:
-                self.error = CloudKitError.iCloudAccountUnavailable.rawValue
-            @unknown default:
-                self.error = CloudKitError.iCloudAccountOtherUnknown.rawValue
-            }
+            try await ckService.verifyiCloudAvailability()
         } catch {
-            self.error = "An error occurred: \(error.localizedDescription)"
+            self.error = error.localizedDescription
         }
     }
 

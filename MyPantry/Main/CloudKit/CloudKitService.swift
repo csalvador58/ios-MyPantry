@@ -38,9 +38,13 @@ struct CloudKitService: CloudKitServiceType {
 }
 
 enum CloudKitError: String, LocalizedError {
-    case iCloudAccountUnknown
-    case iCloudAccountRestricted
-    case iCloudAccountNotFound
-    case iCloudAccountUnavailable
-    case iCloudAccountOtherUnknown
+    case iCloudAccountUnknown = "Account Unknown"
+    case iCloudAccountRestricted = "Account Restricted"
+    case iCloudAccountNotFound = " Account Not Found"
+    case iCloudAccountUnavailable = " Account Unavailable"
+    case iCloudAccountOtherUnknown = "Account Service Error"
+    
+    var errorDescription: String? {
+        return self.rawValue
+    }
 }
