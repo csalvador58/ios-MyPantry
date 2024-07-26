@@ -71,4 +71,3 @@ struct ItemConverter: CloudKitConvertible {
         return record
     }
 }
-

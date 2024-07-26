@@ -42,7 +42,7 @@ struct EditPropertyView: View {
             expireDate: property == "expireDate" ? editedDate : item.expireDate,
             note: property == "note" ? (editedValue.isEmpty ? nil : editedValue) : item.note,
             pantryId: item.pantryId,
-            status: property == "status" ? (ItemStatus(rawValue: Int(editedValue) ?? item.status.rawValue) ?? item.status) : item.status
+            status: property == "status" ? (Item.ItemStatus(rawValue: Int(editedValue) ?? item.status.rawValue) ?? item.status) : item.status
         )
     }
 
@@ -90,7 +90,7 @@ struct EditPropertyView: View {
                 Toggle("Favorite", isOn: $editedBool)
             case "status":
                 Picker("Status", selection: $editedValue) {
-                    ForEach(ItemStatus.allCases) { status in
+                    ForEach(Item.ItemStatus.allCases) { status in
                         Text(status.descr).tag(String(status.rawValue))
                     }
                 }

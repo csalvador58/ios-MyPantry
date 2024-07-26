@@ -26,7 +26,7 @@ struct ItemRow: View {
         }
     }
 
-    private func statusColor(for status: ItemStatus) -> Color {
+    private func statusColor(for status: Item.ItemStatus) -> Color {
         switch status {
         case .inStock:
             return .green

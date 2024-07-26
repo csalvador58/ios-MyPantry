@@ -32,18 +32,17 @@ class MockListItemsViewModel: ListItemsViewModel {
 
     private func createMockItems() -> [Item] {
         let mockItems = [
-            createMockItem(name: "Apples", quantity: 5, status: .inStock, pantryId: "pantry1"),
-            createMockItem(name: "Milk", quantity: 1, status: .lowStock, pantryId: "pantry1"),
-            createMockItem(name: "Bread", quantity: 2, status: .inStock, pantryId: "pantry1"),
-            createMockItem(name: "Eggs", quantity: 12, status: .lowStock, pantryId: "pantry1"),
-            createMockItem(name: "Cheese", quantity: 1, status: .outOfStock, pantryId: "pantry1")
+            createMockItem(name: "Apples", quantity: 5, status: Item.ItemStatus.inStock, pantryId: "pantry1"),
+            createMockItem(name: "Milk", quantity: 1, status: Item.ItemStatus.lowStock, pantryId: "pantry1"),
+            createMockItem(name: "Bread", quantity: 2, status: Item.ItemStatus.inStock, pantryId: "pantry1"),
+            createMockItem(name: "Eggs", quantity: 12, status: Item.ItemStatus.lowStock, pantryId: "pantry1"),
+            createMockItem(name: "Cheese", quantity: 1, status: Item.ItemStatus.outOfStock, pantryId: "pantry1")
         ]
         return mockItems
     }
 
-    private func createMockItem(name: String, quantity: Int, status: ItemStatus, pantryId: String) -> Item {
+    private func createMockItem(name: String, quantity: Int, status: Item.ItemStatus, pantryId: String) -> Item {
         return Item(
-            id: CKRecord.ID(recordName: UUID().uuidString),
             name: name,
             quantity: quantity,
             quantityDesired: nil,
@@ -65,9 +64,9 @@ class MockListItemsViewModel: ListItemsViewModel {
         print("Mock fetchItems called. Item count: \(items.count)")
     }
 
-    override func deleteItem(_ item: Item) async {
-        if let index = items.firstIndex(where: { $0.id?.recordName == item.id?.recordName }) {
-            items.remove(at: index)
-        }
-    }
+//    override func deleteItem(_ item: Item) async {
+//        if let index = items.firstIndex(where: { $0.id?.recordName == item.id?.recordName }) {
+//            items.remove(at: index)
+//        }
+//    }
 }
