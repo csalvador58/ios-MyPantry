@@ -15,7 +15,7 @@ struct CloudKitService: CloudKitServiceType {
     func verifyiCloudAvailability() async throws {
         async let accountStatus = CKContainer.default().accountStatus()
         async let userRecordID = CKContainer.default().userRecordID()
-        
+
         switch try await accountStatus {
         case .available:
             _ = try await userRecordID
@@ -31,7 +31,7 @@ struct CloudKitService: CloudKitServiceType {
             throw CloudKitError.iCloudAccountOtherUnknown
         }
     }
-    
+
     func fetchUserRecordID() async throws -> CKRecord.ID {
         try await CKContainer.default().userRecordID()
     }
@@ -43,7 +43,7 @@ enum CloudKitError: String, LocalizedError {
     case iCloudAccountNotFound = " Account Not Found"
     case iCloudAccountUnavailable = " Account Unavailable"
     case iCloudAccountOtherUnknown = "Account Service Error"
-    
+
     var errorDescription: String? {
         return self.rawValue
     }

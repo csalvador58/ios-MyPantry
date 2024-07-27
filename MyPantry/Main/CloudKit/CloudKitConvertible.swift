@@ -13,11 +13,45 @@ protocol CloudKitConvertible {
     static func toRecord(_ item: ModelType) -> CKRecord
 }
 
+struct PantryConverter: CloudKitConvertible {
+    typealias ModelType = Pantry
+
+    static var recordType: CKRecord.RecordType { "Pantry" }
+
+    static func fromRecord(_ record: CKRecord) -> Pantry? {
+        guard record.recordType == recordType,
+              let name = record[Pantry.CodingKeys.name.rawValue] as? String,
+              let ownerId = record[Pantry.CodingKeys.ownerId.rawValue] as? String,
+              let isShared = record[Pantry.CodingKeys.isShared.rawValue] as? Bool
+        else { return nil }
+
+        return Pantry(
+            id: record.recordID.recordName,
+            name: name,
+            ownerId: ownerId,
+            shareReference: record[Pantry.CodingKeys.shareReference.rawValue] as? String,
+            isShared: isShared
+        )
+    }
+
+    static func toRecord(_ pantry: Pantry) -> CKRecord {
+        let recordID = CKRecord.ID(recordName: pantry.id)
+        let record = CKRecord(recordType: recordType, recordID: recordID)
+
+        record[Pantry.CodingKeys.name.rawValue] = pantry.name
+        record[Pantry.CodingKeys.ownerId.rawValue] = pantry.ownerId
+        record[Pantry.CodingKeys.shareReference.rawValue] = pantry.shareReference
+        record[Pantry.CodingKeys.isShared.rawValue] = pantry.isShared
+
+        return record
+    }
+}
+
 struct ItemConverter: CloudKitConvertible {
     typealias ModelType = Item
-    
+
     static var recordType: CKRecord.RecordType { "Item" }
-    
+
     static func fromRecord(_ record: CKRecord) -> Item? {
         guard record.recordType == recordType,
               let name = record[Item.CodingKeys.name.rawValue] as? String,
@@ -29,7 +63,7 @@ struct ItemConverter: CloudKitConvertible {
               let pantryId = record[Item.CodingKeys.pantryId.rawValue] as? String,
               let status = Item.ItemStatus(rawValue: statusRawValue)
         else { return nil }
-        
+
         return Item(
             id: record.recordID.recordName,
             name: name,
@@ -48,11 +82,11 @@ struct ItemConverter: CloudKitConvertible {
             status: status
         )
     }
-    
+
     static func toRecord(_ item: Item) -> CKRecord {
         let recordID = CKRecord.ID(recordName: item.id)
         let record = CKRecord(recordType: recordType, recordID: recordID)
-        
+
         record[Item.CodingKeys.name.rawValue] = item.name
         record[Item.CodingKeys.quantity.rawValue] = item.quantity
         record[Item.CodingKeys.quantityDesired.rawValue] = item.quantityDesired
@@ -67,7 +101,7 @@ struct ItemConverter: CloudKitConvertible {
         record[Item.CodingKeys.note.rawValue] = item.note
         record[Item.CodingKeys.pantryId.rawValue] = item.pantryId
         record[Item.CodingKeys.status.rawValue] = item.status.rawValue
-        
+
         return record
     }
 }

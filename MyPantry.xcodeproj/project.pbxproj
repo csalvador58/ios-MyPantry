@@ -12,10 +12,10 @@
 		B91161882C47262E005731E0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B91161872C47262E005731E0 /* Assets.xcassets */; };
 		B911618B2C47262E005731E0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B911618A2C47262E005731E0 /* Preview Assets.xcassets */; };
 		B91161922C472669005731E0 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = B91161912C472669005731E0 /* .gitignore */; };
-		B91161962C472780005731E0 /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = B91161952C472780005731E0 /* Models */; };
 		B91161992C472903005731E0 /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91161982C472903005731E0 /* AppView.swift */; };
 		B911619D2C473D6A005731E0 /* AddItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B911619C2C473D6A005731E0 /* AddItemView.swift */; };
 		B911619F2C473EDD005731E0 /* AddItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B911619E2C473EDD005731E0 /* AddItemViewModel.swift */; };
+		B929F2812C543F390006EF48 /* Models in Frameworks */ = {isa = PBXBuildFile; productRef = B929F2802C543F390006EF48 /* Models */; };
 		B92D1DBF2C4BB85B0021C4D4 /* ListItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B92D1DBE2C4BB85B0021C4D4 /* ListItemsView.swift */; };
 		B92D1DC12C4BB9930021C4D4 /* ListItemsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B92D1DC02C4BB9930021C4D4 /* ListItemsViewModel.swift */; };
 		B962F4392C503A3100F27159 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B962F4382C503A3100F27159 /* AppTheme.swift */; };
@@ -80,7 +80,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B91161962C472780005731E0 /* Models in Frameworks */,
+				B929F2812C543F390006EF48 /* Models in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -280,7 +280,7 @@
 			);
 			name = MyPantry;
 			packageProductDependencies = (
-				B91161952C472780005731E0 /* Models */,
+				B929F2802C543F390006EF48 /* Models */,
 			);
 			productName = MyPantry;
 			productReference = B91161802C47262D005731E0 /* MyPantry.app */;
@@ -600,7 +600,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		B91161952C472780005731E0 /* Models */ = {
+		B929F2802C543F390006EF48 /* Models */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Models;
 		};
