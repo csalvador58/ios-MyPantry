@@ -8,30 +8,32 @@ import CloudKit
 import Foundation
 
 public struct Pantry: Identifiable, Equatable, Hashable {
-//    public static let recordType = "Pantry"
-//    public static let zoneId = CKRecordZone.ID(zoneName: "PantryZone")
 
     public let id: String
     public let name: String
     public let ownerId: String
-    public let shareReference: String?
+    public let shareReferenceId: String?
     public let isShared: Bool
+    public let zoneId: String?
 
     public enum CodingKeys: String {
-        case name, ownerId, shareReference, isShared
+        case name, ownerId, shareReferenceId, isShared, zoneId
     }
 
     public init(
         id: String = UUID().uuidString,
         name: String,
         ownerId: String,
-        shareReference: String? = nil,
-        isShared: Bool = false
+        shareReferenceId: String? = nil,
+        isShared: Bool = false,
+        zoneId: String? = nil
     ) {
         self.id = id
         self.name = name
         self.ownerId = ownerId
-        self.shareReference = shareReference
+        self.shareReferenceId = shareReferenceId
         self.isShared = isShared
+        self.zoneId = zoneId
     }
 }
+
