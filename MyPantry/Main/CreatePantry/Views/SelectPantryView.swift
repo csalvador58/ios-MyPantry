@@ -11,10 +11,10 @@ import SwiftUI
 struct SelectPantryView: View {
     @Environment(\.pantryService) var pantryService
     @Binding var viewModel: AppViewModel
-    
+
     @AppStorage("selectedPantryId") private var selectedPantryId: String?
     @AppStorage("cachedICloudUserId") private var cachedICloudUserId: String?
-    
+
     var body: some View {
         NavigationStack {
             VStack {
@@ -23,6 +23,9 @@ struct SelectPantryView: View {
                 } else if viewModel.myPantries.isEmpty {
                     VStack {
                         Text("No pantries found")
+                        Text("iCloud User Record ID: \(viewModel.userRecordId ?? "Not Available")")
+                        Text("iCloud has icloud account: \(viewModel.hasIcloudAccount ? "True" : "False")")
+                        Text("iCloud username: \(viewModel.userName ?? "Not Available")")
                         Button("Create New Pantry") {
                             viewModel.showCreatePantryView = true
                         }
@@ -34,7 +37,7 @@ struct SelectPantryView: View {
                         }
                     }
                 }
-                
+
                 if !viewModel.error.isEmpty {
                     Text("Error: \(viewModel.error)")
                         .foregroundStyle(Color.red)
@@ -53,7 +56,7 @@ struct SelectPantryView: View {
             }
         }
     }
-    
+
     private func loadPantries() async {
         viewModel.isLoading = true
         viewModel.error = ""
@@ -68,7 +71,7 @@ struct SelectPantryView: View {
         }
         viewModel.isLoading = false
     }
-    
+
     private func createPantry(_ pantry: Pantry) async {
         viewModel.isLoading = true
         viewModel.error = ""
@@ -89,7 +92,7 @@ struct SelectPantryView: View {
         }
         viewModel.isLoading = false
     }
-    
+
     private func getICloudUserId() async throws -> String {
         if let cachedId = cachedICloudUserId {
             return cachedId
@@ -98,10 +101,9 @@ struct SelectPantryView: View {
         cachedICloudUserId = newId
         return newId
     }
-    
+
     private func fetchICloudUserId() async throws -> String {
         let container = CKContainer(identifier: Config.containerIdentifier)
         return try await container.userRecordID().recordName
     }
-
 }

@@ -98,7 +98,6 @@ struct ItemManager: ItemManagerType {
     }
 
     func updateItem(_ item: Item, in _: String) async throws -> Item {
-
         // Fetch record of item to update
         let record = try await ckDB.record(for: CKRecord.ID(recordName: item.id))
         // Update the record with the new item data
@@ -116,7 +115,6 @@ struct ItemManager: ItemManagerType {
     }
 
     func deleteItem(_ item: Item, from pantryId: String) async throws {
-
         try await ckDB.deleteRecord(withID: CKRecord.ID(recordName: item.id))
 
         var items = try await fetchItems(for: pantryId)

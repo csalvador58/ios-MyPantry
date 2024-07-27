@@ -3,7 +3,6 @@
 //  Created by Chris Salvador on 2024
 //  SWD Creative Labs
 //
-import CloudKit
 import Foundation
 
 public struct Item: Identifiable, Equatable, Hashable {
@@ -65,9 +64,9 @@ public struct Item: Identifiable, Equatable, Hashable {
 public extension Item {
     enum ItemStatus: Int, Codable, Identifiable, CaseIterable {
         case inStock, outOfStock, lowStock, inactive
-        
+
         public var id: Self { self }
-        
+
         public var descr: String {
             switch self {
             case .inStock: return "In Stock"
@@ -78,24 +77,3 @@ public extension Item {
         }
     }
 }
-
-//public extension Item {
-//    func recordDictionary() -> [CodingKeys: CKRecordValue?] {
-//        return [
-//            .name: name as CKRecordValue?,
-//            .quantity: quantity as CKRecordValue?,
-//            .quantityDesired: quantityDesired as CKRecordValue?,
-//            .barcode: barcode as CKRecordValue?,
-//            .favorite: favorite as CKRecordValue?,
-//            .customContent1: customContent1 as CKRecordValue?,
-//            .customContent2: customContent2 as CKRecordValue?,
-//            .customContent3: customContent3 as CKRecordValue?,
-//            .dateAdded: dateAdded as CKRecordValue?,
-//            .dateLastUpdated: dateLastUpdated as CKRecordValue?,
-//            .expireDate: expireDate as CKRecordValue?,
-//            .note: note as CKRecordValue?,
-//            .pantryId: pantryId as CKRecordValue?,
-//            .status: status.rawValue as CKRecordValue?,
-//        ]
-//    }
-//}
