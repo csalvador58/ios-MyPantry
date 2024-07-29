@@ -29,7 +29,7 @@ struct PantryConverter: CloudKitConvertible {
             id: record.recordID.recordName,
             name: name,
             ownerId: ownerId,
-            shareReference: record[Pantry.CodingKeys.shareReference.rawValue] as? String,
+            shareReferenceId: record[Pantry.CodingKeys.shareReferenceId.rawValue] as? String,
             isShared: isShared
         )
     }
@@ -40,7 +40,7 @@ struct PantryConverter: CloudKitConvertible {
 
         record[Pantry.CodingKeys.name.rawValue] = pantry.name
         record[Pantry.CodingKeys.ownerId.rawValue] = pantry.ownerId
-        record[Pantry.CodingKeys.shareReference.rawValue] = pantry.shareReference
+        record[Pantry.CodingKeys.shareReferenceId.rawValue] = pantry.shareReferenceId
         record[Pantry.CodingKeys.isShared.rawValue] = pantry.isShared
 
         return record
