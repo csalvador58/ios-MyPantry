@@ -4,7 +4,6 @@
 //  SWD Creative Labs
 //
 
-import CloudKit
 import Foundation
 import Models
 import SwiftUI
@@ -20,79 +19,66 @@ extension EnvironmentValues {
     }
 }
 
+struct SharingInfo {
+    let pantry: Pantry
+    let shareId: String
+}
+
 protocol PantryServiceType {
-    func fetchPantry(by ownerId: String) async throws -> [Pantry]
-    func addPantry(_ pantry: Pantry, ownerId: String) async throws -> Pantry
+    func savePantry(_ pantry: Pantry) async throws -> Pantry
+    func fetchPantries(by ownerId: String) async throws -> [Pantry]
     func updatePantry(_ pantry: Pantry) async throws -> Pantry
     func deletePantry(_ pantry: Pantry) async throws
-    func fetchOrCreateShare(for pantry: Pantry) async throws -> (CKShare, CKContainer)
-    func acceptShare(metadata: CKShare.Metadata) async throws
+    func createSharedPantry(_ pantry: Pantry) async throws -> Pantry
+    func fetchOrCreateShare(for pantry: Pantry) async throws -> SharingInfo
 }
 
 struct PantryService: PantryServiceType {
-    let ckDB: CKDatabase
-    let cloudKitService: CloudKitServiceType
-
+    private let cloudKitService: CloudKitServiceType
+    
     init(cloudKitService: CloudKitServiceType = CloudKitService()) {
         self.cloudKitService = cloudKitService
-        self.ckDB = CKContainer(identifier: Config.containerIdentifier).privateCloudDatabase
     }
-
-    func fetchPantry(by ownerId: String) async throws -> [Pantry] {
-        let predicate = NSPredicate(format: "ownerId == %@", ownerId)
-        let query = CKQuery(recordType: PantryConverter.recordType, predicate: predicate)
-//        let query = CKQuery(recordType: Pantry.type, predicate: NSPredicate(value: true))
-
-        let (matchResults, _) = try await ckDB.records(matching: query)
-        let records = matchResults.compactMap { try? $0.1.get() }
-
-        return records.compactMap { PantryConverter.fromRecord($0) }
-    }
-
-    func addPantry(_ pantry: Pantry, ownerId: String) async throws -> Pantry {
-        var newPantry = pantry
-        if pantry.isShared {
-            newPantry = try await cloudKitService.createSharedZone(for: pantry)
-        }
-
-        let record = PantryConverter.toRecord(newPantry)
-        let saveRecord = try await ckDB.save(record)
-        guard let savedPantry = PantryConverter.fromRecord(saveRecord) else {
+    
+    func savePantry(_ pantry: Pantry) async throws -> Pantry {
+        let record = PantryConverter.toRecord(pantry)
+        let savedRecord = try await cloudKitService.saveRecord(record)
+        guard let savedPantry = PantryConverter.fromRecord(savedRecord) else {
             throw PantryServiceError.failedToSavePantry
         }
-
         return savedPantry
     }
-
+    
+    func fetchPantries(by ownerId: String) async throws -> [Pantry] {
+        let predicate = NSPredicate(format: "ownerId == %@", ownerId)
+        let records = try await cloudKitService.fetchRecords(ofType: PantryConverter.recordType, withPredicate: predicate)
+        return records.compactMap { PantryConverter.fromRecord($0) }
+    }
+    
     func updatePantry(_ pantry: Pantry) async throws -> Pantry {
-        let recordId = pantry.id
-        let record = try await ckDB.record(for: CKRecord.ID(recordName: recordId))
-
-        record[Pantry.CodingKeys.name.rawValue] = pantry.name
-        record[Pantry.CodingKeys.ownerId.rawValue] = pantry.ownerId
-        record[Pantry.CodingKeys.shareReferenceId.rawValue] = pantry.shareReferenceId
-        record[Pantry.CodingKeys.isShared.rawValue] = pantry.isShared
-        record[Pantry.CodingKeys.zoneId.rawValue] = pantry.zoneId
-
-        let updateRecord = try await ckDB.save(record)
-
-        guard let updatedPantry = PantryConverter.fromRecord(updateRecord) else {
+        let record = PantryConverter.toRecord(pantry)
+        let updatedRecord = try await cloudKitService.updateRecord(record)
+        guard let updatedPantry = PantryConverter.fromRecord(updatedRecord) else {
             throw PantryServiceError.failedToUpdatePantry
         }
-
         return updatedPantry
     }
-
+    
     func deletePantry(_ pantry: Pantry) async throws {
-        let recordId = pantry.id
-        try await ckDB.deleteRecord(withID: CKRecord.ID(recordName: recordId))
+        let record = PantryConverter.toRecord(pantry)
+        try await cloudKitService.deleteRecord(withID: record.recordID)
     }
     
-    func fetchOrCreateShare(for pantry: Pantry) async throws -> (CKShare, CKContainer) {
-        try await cloudKitService.fetchOrCreateShare(for: pantry)
+    func createSharedPantry(_ pantry: Pantry) async throws -> Pantry {
+        let sharedCloudKitPantry = try await cloudKitService.createSharedZone(for: pantry)
+        guard let sharedPantry = PantryConverter.fromRecord(PantryConverter.toRecord(sharedCloudKitPantry)) else {
+            throw PantryServiceError.failedToCreateSharedPantry
+        }
+        return sharedPantry
     }
     
-    func acceptShare(metadata: CKShare.Metadata) async throws {
-        try await cloudKitService.acceptShare(metadata: metadata)
+    func fetchOrCreateShare(for pantry: Pantry) async throws -> SharingInfo {
+        let (share, _) = try await cloudKitService.fetchOrCreateShare(for: pantry)
+        return SharingInfo(pantry: pantry, shareId: share.recordID.recordName)
     }
 }
