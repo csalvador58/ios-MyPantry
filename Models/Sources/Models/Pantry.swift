@@ -4,11 +4,9 @@
 //  SWD Creative Labs
 //
 
-import CloudKit
 import Foundation
 
 public struct Pantry: Identifiable, Equatable, Hashable {
-
     public let id: String
     public let name: String
     public let ownerId: String
