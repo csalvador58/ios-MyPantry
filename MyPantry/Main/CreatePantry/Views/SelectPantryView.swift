@@ -3,107 +3,106 @@
 //  Created by Chris Salvador on 2024
 //  SWD Creative Labs
 //
-import CloudKit
-import Models
 import SwiftUI
+import Models
 
-@MainActor
 struct SelectPantryView: View {
-    @Environment(\.pantryService) var pantryService
-    @Binding var viewModel: AppViewModel
-
+    @Environment(\.pantryService) private var pantryService
+    @State private var vm: SelectPantryViewModel
     @AppStorage("selectedPantryId") private var selectedPantryId: String?
-    @AppStorage("cachedICloudUserId") private var cachedICloudUserId: String?
-
+    
+    init(viewModel: SelectPantryViewModel = SelectPantryViewModel()) {
+        _vm = State(initialValue: viewModel)
+    }
+    
     var body: some View {
         NavigationStack {
-            VStack {
-                if viewModel.isLoading {
-                    ProgressView()
-                } else if viewModel.myPantries.isEmpty {
+            Group {
+                if vm.isLoading {
+                    VStack {
+                        ProgressView("Loading...")
+                    }
+                } else if vm.privatePantries.isEmpty && vm.sharedPantries.isEmpty {
                     VStack {
                         Text("No pantries found")
-                        Text("iCloud User Record ID: \(viewModel.userRecordId ?? "Not Available")")
-                        Text("iCloud has icloud account: \(viewModel.hasIcloudAccount ? "True" : "False")")
-                        Text("iCloud username: \(viewModel.userName ?? "Not Available")")
-                        Button("Create New Pantry") {
-                            viewModel.showCreatePantryView = true
-                        }
+                        Text("Create a new pantry to get started")
                     }
                 } else {
-                    List(viewModel.myPantries) { pantry in
-                        Button(pantry.name) {
-                            selectedPantryId = pantry.id.recordName
-                        }
-                    }
-                }
-
-                if !viewModel.error.isEmpty {
-                    Text("Error: \(viewModel.error)")
-                        .foregroundStyle(Color.red)
+                    pantriesList
                 }
             }
             .navigationTitle("Select Pantry")
-            .task {
-                await loadPantries()
+        }
+        .task {
+            await vm.loadPantries()
+        }
+        .alert("Error", isPresented: .constant(vm.error != nil), actions: {
+            Button("OK") {
+                vm.error = nil
             }
-            .sheet(isPresented: $viewModel.showCreatePantryView) {
-                CreatePantryView(viewModel: CreatePantryViewModel(), onComplete: { newPantry in
-                    Task {
-                        await createPantry(newPantry)
+        }, message: {
+            Text(vm.error ?? "An unknown error occurred")
+        })
+    }
+    
+    private var pantriesList: some View {
+        List {
+            if !vm.privatePantries.isEmpty {
+                Section("Private Pantries") {
+                    ForEach(vm.privatePantries) { pantry in
+                        pantryRow(pantry)
                     }
-                })
+                }
+            }
+            if !vm.sharedPantries.isEmpty {
+                Section("Shared Pantries") {
+                    ForEach(vm.sharedPantries) { pantry in
+                        pantryRow(pantry)
+                    }
+                }
             }
         }
     }
-
-    private func loadPantries() async {
-        viewModel.isLoading = true
-        viewModel.error = ""
-        do {
-            let ownerId = try await getICloudUserId()
-            viewModel.myPantries = try await pantryService.fetchPantry(by: ownerId)
-            if viewModel.myPantries.isEmpty {
-                viewModel.showCreatePantryView = true
+    
+    private func pantryRow(_ pantry: Pantry) -> some View {
+        Button {
+            selectedPantryId = pantry.id
+        } label: {
+            HStack {
+                Text(pantry.name)
+                Spacer()
+                if pantry.isShared {
+                    Image(systemName: "person.2")
+                }
             }
-        } catch {
-            viewModel.error = error.localizedDescription
         }
-        viewModel.isLoading = false
     }
+}
 
-    private func createPantry(_ pantry: Pantry) async {
-        viewModel.isLoading = true
-        viewModel.error = ""
-        do {
-            let ownerId = try await getICloudUserId()
-            let newPantryWithOwner = Pantry(
-                id: pantry.id,
-                name: pantry.name,
-                ownerId: ownerId,
-                isShared: pantry.isShared
-            )
-            let newPantry = try await pantryService.addPantry(newPantryWithOwner, ownerId: ownerId)
-            viewModel.myPantries.append(newPantry)
-            selectedPantryId = newPantry.id.recordName
-            viewModel.showCreatePantryView = false
-        } catch {
-            viewModel.error = error.localizedDescription
-        }
-        viewModel.isLoading = false
-    }
+#Preview("With Pantries") {
+    let mockVM = MockSelectPantryViewModel()
+    mockVM.privatePantries = [
+        Pantry(id: "1", name: "My Pantry", ownerId: "user1", isShared: false),
+        Pantry(id: "2", name: "Kitchen", ownerId: "user1", isShared: false)
+    ]
+    mockVM.sharedPantries = [
+        Pantry(id: "3", name: "Family Pantry", ownerId: "user2", isShared: true)
+    ]
+    return SelectPantryView(viewModel: mockVM)
+}
 
-    private func getICloudUserId() async throws -> String {
-        if let cachedId = cachedICloudUserId {
-            return cachedId
-        }
-        let newId = try await fetchICloudUserId()
-        cachedICloudUserId = newId
-        return newId
-    }
+#Preview("Loading") {
+    let mockVM = MockSelectPantryViewModel()
+    mockVM.isLoading = true
+    return SelectPantryView(viewModel: mockVM)
+}
 
-    private func fetchICloudUserId() async throws -> String {
-        let container = CKContainer(identifier: Config.containerIdentifier)
-        return try await container.userRecordID().recordName
-    }
+#Preview("No Pantries") {
+    SelectPantryView(viewModel: MockSelectPantryViewModel())
+}
+
+#Preview("Error") {
+    let mockVM = MockSelectPantryViewModel()
+    mockVM.error = "Failed to load pantries"
+    return SelectPantryView(viewModel: mockVM)
 }
