@@ -21,4 +21,8 @@ public enum PantryServiceError: Error {
     case invalidPantryId
     case failedToSetRecordValues
     case failedToCreateSharedPantry
+    case failedToFetchPantry
+    case invalidPantryZone
+    case failedToFetchShare
+    case userNotFound
 }

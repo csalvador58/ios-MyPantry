@@ -27,6 +27,7 @@
 		B99CFFCD2C534774007BDB2C /* CloudKitConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = B99CFFCC2C534774007BDB2C /* CloudKitConvertible.swift */; };
 		B99DB73C2C4A121B0050E74B /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = B99DB73B2C4A121B0050E74B /* .swiftlint.yml */; };
 		B99DB73E2C4A12250050E74B /* .swiftformat in Resources */ = {isa = PBXBuildFile; fileRef = B99DB73D2C4A12240050E74B /* .swiftformat */; };
+		B9CD52172C59696F001E4B59 /* SelectPantryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CD52162C59696F001E4B59 /* SelectPantryViewModel.swift */; };
 		B9CFB0B42C477E1800178D8A /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CFB0B32C477E1800178D8A /* UserService.swift */; };
 		B9CFB0B82C477E7300178D8A /* ItemManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CFB0B72C477E7300178D8A /* ItemManager.swift */; };
 		B9CFB0BA2C477F6200178D8A /* PantryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CFB0B92C477F6200178D8A /* PantryService.swift */; };
@@ -63,6 +64,7 @@
 		B99CFFCC2C534774007BDB2C /* CloudKitConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitConvertible.swift; sourceTree = "<group>"; };
 		B99DB73B2C4A121B0050E74B /* .swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		B99DB73D2C4A12240050E74B /* .swiftformat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .swiftformat; sourceTree = "<group>"; };
+		B9CD52162C59696F001E4B59 /* SelectPantryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectPantryViewModel.swift; sourceTree = "<group>"; };
 		B9CFB0B32C477E1800178D8A /* UserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
 		B9CFB0B72C477E7300178D8A /* ItemManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemManager.swift; sourceTree = "<group>"; };
 		B9CFB0B92C477F6200178D8A /* PantryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryService.swift; sourceTree = "<group>"; };
@@ -213,6 +215,7 @@
 			isa = PBXGroup;
 			children = (
 				B99CFFC92C51E762007BDB2C /* SelectPantryView.swift */,
+				B9CD52162C59696F001E4B59 /* SelectPantryViewModel.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -377,6 +380,7 @@
 				B962F43B2C503C1000F27159 /* ThemeModifier.swift in Sources */,
 				B9CFB0B42C477E1800178D8A /* UserService.swift in Sources */,
 				B9DD42FA2C4CADE800900268 /* ViewItemView.swift in Sources */,
+				B9CD52172C59696F001E4B59 /* SelectPantryViewModel.swift in Sources */,
 				B99CFFCD2C534774007BDB2C /* CloudKitConvertible.swift in Sources */,
 				B9CFB0BA2C477F6200178D8A /* PantryService.swift in Sources */,
 				B90B89762C4895FD00855465 /* SetCKRecords.swift in Sources */,
