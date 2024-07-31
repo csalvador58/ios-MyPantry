@@ -9,9 +9,7 @@ import Models
 
 protocol CloudKitServiceType {
     func verifyiCloudAvailability() async throws
-    func fetchUserRecordID() async throws -> CKRecord.ID
-    func createSharedZone(for pantry: Pantry) async throws -> Pantry
-    func fetchOrCreateShare(for pantry: Pantry) async throws -> (CKShare, CKContainer)
+    func fetchUserRecordID() async throws -> String
     func acceptShare(metadata: CKShare.Metadata) async throws
     func saveRecord(_ record: CKRecord) async throws -> CKRecord
     func fetchRecords(ofType recordType: String, withPredicate predicate: NSPredicate) async throws -> [CKRecord]
@@ -31,7 +29,7 @@ struct CloudKitService: CloudKitServiceType {
     func verifyiCloudAvailability() async throws {
         async let accountStatus = CKContainer.default().accountStatus()
         async let userRecordID = CKContainer.default().userRecordID()
-
+        
         switch try await accountStatus {
         case .available:
             _ = try await userRecordID
@@ -48,52 +46,9 @@ struct CloudKitService: CloudKitServiceType {
         }
     }
 
-    func fetchUserRecordID() async throws -> CKRecord.ID {
-        try await CKContainer.default().userRecordID()
-        
-    }
-    
-    func createSharedZone(for pantry: Pantry) async throws -> Pantry {
-        let customZoneID = CKRecordZone.ID(zoneName: "SharedPantry-\(pantry.id)")
-        let customZone = CKRecordZone(zoneID: customZoneID)
-        
-        _ = try await privateDatabase.modifyRecordZones(saving: [customZone], deleting: [])
-        
-        let updatedPantry = Pantry(
-            id: pantry.id,
-            name: pantry.name,
-            ownerId: pantry.ownerId,
-            shareReferenceId: nil,
-            isShared: true,
-            zoneId: customZoneID.zoneName
-        )
-        
-        return updatedPantry
-    }
-    
-    func fetchOrCreateShare(for pantry: Pantry) async throws -> (CKShare, CKContainer) {
-        guard let zoneId = pantry.zoneId else {
-            throw CloudKitError.sharedZoneNotFound
-        }
-        
-        let customZoneID = CKRecordZone.ID(zoneName: zoneId)
-        
-        // Check if the zone exists
-        let zone = try await privateDatabase.record(for: .init(zoneID: customZoneID))
-        
-        if let existingShare = zone.share {
-            // If the zone has an existing share, fetch and return it
-            let share = try await privateDatabase.record(for: existingShare.recordID) as? CKShare
-            return (share ?? CKShare(recordZoneID: customZoneID), container)
-        } else {
-            // If no existing share, create a new one
-            let share = CKShare(recordZoneID: customZoneID)
-            share[CKShare.SystemFieldKey.title] = "Shared Pantry: \(pantry.name)"
-            
-            _ = try await privateDatabase.modifyRecords(saving: [share], deleting: [])
-            
-            return (share, container)
-        }
+    func fetchUserRecordID() async throws -> String {
+        let recordID = try await CKContainer.default().userRecordID()
+        return recordID.recordName
     }
     
     func acceptShare(metadata: CKShare.Metadata) async throws {
@@ -140,11 +95,68 @@ enum CloudKitError: String, LocalizedError {
     case iCloudAccountUnavailable = " Account Unavailable"
     case iCloudAccountOtherUnknown = "Account Service Error"
     case conversionFailed = "Conversion Failed"
-    case sharedZoneCreationFailed = "Shared Zone Creation Failed"
-    case sharedZoneNotFound = "Shared Zone Not Found"
-    case shareCreationFailed = "Failed to Create Share"
-
+    
     var errorDescription: String? {
         return self.rawValue
+    }
+}
+
+class MockCloudKitService: CloudKitServiceType {
+    var shouldSucceed: Bool
+    var mockUserRecordID: String
+    
+    init(shouldSucceed: Bool = true, mockUserRecordID: String = "mock-user-id") {
+        self.shouldSucceed = shouldSucceed
+        self.mockUserRecordID = mockUserRecordID
+    }
+    
+    func verifyiCloudAvailability() async throws {
+        if !shouldSucceed {
+            throw CloudKitError.iCloudAccountNotFound
+        }
+    }
+    
+    func fetchUserRecordID() async throws -> String {
+        if shouldSucceed {
+            return mockUserRecordID
+        } else {
+            throw CloudKitError.iCloudAccountNotFound
+        }
+    }
+    
+    func acceptShare(metadata: CKShare.Metadata) async throws {
+        if !shouldSucceed {
+            throw CloudKitError.iCloudAccountNotFound
+        }
+    }
+    
+    func saveRecord(_ record: CKRecord) async throws -> CKRecord {
+        if shouldSucceed {
+            return record
+        } else {
+            throw CloudKitError.iCloudAccountNotFound
+        }
+    }
+    
+    func fetchRecords(ofType recordType: String, withPredicate predicate: NSPredicate) async throws -> [CKRecord] {
+        if shouldSucceed {
+            return []
+        } else {
+            throw CloudKitError.iCloudAccountNotFound
+        }
+    }
+    
+    func updateRecord(_ record: CKRecord) async throws -> CKRecord {
+        if shouldSucceed {
+            return record
+        } else {
+            throw CloudKitError.iCloudAccountNotFound
+        }
+    }
+    
+    func deleteRecord(withID recordID: CKRecord.ID) async throws {
+        if !shouldSucceed {
+            throw CloudKitError.iCloudAccountNotFound
+        }
     }
 }
