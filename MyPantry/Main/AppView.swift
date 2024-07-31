@@ -3,29 +3,39 @@
 //  Created by Chris Salvador on 2024
 //  SWD Creative Labs
 //
-import CloudKit
 import Models
 import SwiftUI
 
-@MainActor
 struct AppView: View {
-    @Environment(\.privateItemManager) var privateItemManager
-    @Environment(\.sharedItemManager) var sharedItemManger
-    @Environment(\.pantryService) var pantryService
-    @State var viewModel = AppViewModel()
-
+    @State private var viewModel: AppViewModel
+    
     @AppStorage("selectedPantryId") private var selectedPantryId: String?
     @AppStorage("cachedICloudUserId") private var cachedICloudUserId: String?
-
+    
+    init(viewModel: AppViewModel = AppViewModel()) {
+        _viewModel = State(initialValue: viewModel)
+    }
+    
     var body: some View {
-        if viewModel.isSignedInToiCloud {
-            if let pantryId = selectedPantryId, !pantryId.isEmpty {
-                mainView
+        Group {
+            if viewModel.isSignedInToiCloud {
+                if let pantryId = selectedPantryId, !pantryId.isEmpty {
+                    mainView
+                } else {
+                    SelectPantryView()
+                }
             } else {
-                SelectPantryView(viewModel: $viewModel)
+                signInView
             }
-        } else {
-            signInView
+        }
+        .task {
+            await viewModel.getiCloudStatus()
+        }
+        .onAppear {
+            viewModel.cachedICloudUserIdBinding = Binding(
+                get: { cachedICloudUserId },
+                set: { cachedICloudUserId = $0 }
+            )
         }
     }
 
@@ -39,36 +49,69 @@ struct AppView: View {
                 .tabItem {
                     Label("My Pantry", systemImage: "door.french.open")
                 }
-            AddItemView()
+            Text("Add Item VIew")
                 .tabItem {
                     Label("Add Item", systemImage: "plus.app.fill")
+                }
+            Text("Settings View")
+                .tabItem {
+                    Label("Settings", systemImage: "gear")
                 }
         }
         .withTheme()
     }
 
     private var signInView: some View {
-        VStack {
-            Link("Click to Sign In to your iCloud Account", destination: URL(string: "App-Prefs:root=CASTLE")!)
-
+        VStack(spacing: 20) {
+            Text("Welcome to My Pantry")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+            
+            Text("Please sign in to your iCloud account to use this app.")
+                .multilineTextAlignment(.center)
+                .padding()
+            
+            Button(action: {
+                // Open iOS Settings app
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(url)
+                }
+            }) {
+                Text("Sign In to iCloud")
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
+            
             if !viewModel.error.isEmpty {
-                Text("Error: \(viewModel.error)")
-                    .foregroundStyle(Color.red)
+                Text(viewModel.error)
+                    .foregroundColor(.red)
+                    .padding()
             }
         }
+        .padding()
+        //    private var signInView: some View {
+        //        VStack {
+        //            Link("Click to Sign In to your iCloud Account", destination: URL(string: "App-Prefs:root=CASTLE")!)
+        //
+        //            if !viewModel.error.isEmpty {
+        //                Text("Error: \(viewModel.error)")
+        //                    .foregroundStyle(Color.red)
+        //            }
+        //        }
+        //    }
     }
 }
 
- #Preview("iCloud Not Enabled") {
-    Group {
-        let viewModel = MockAppViewModel(isIcloudEnabled: false)
-        AppView(viewModel: viewModel)
-    }
- }
+#Preview("iCloud Enabled") {
+    let viewModel = MockAppViewModel()
+    viewModel.setup(isIcloudEnabled: true)
+    return AppView(viewModel: viewModel)
+}
 
- #Preview("iCloud Enabled") {
-    Group {
-        let viewModel = MockAppViewModel(isIcloudEnabled: true)
-        AppView(viewModel: viewModel)
-    }
- }
+#Preview("iCloud Not Enabled") {
+    let viewModel = MockAppViewModel()
+    viewModel.setup(isIcloudEnabled: false, error: "iCloud account not found")
+    return AppView(viewModel: viewModel)
+}
