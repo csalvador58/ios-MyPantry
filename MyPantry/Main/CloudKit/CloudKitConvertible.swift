@@ -47,6 +47,17 @@ struct PantryConverter: CloudKitConvertible {
     }
 }
 
+extension PantryConverter {
+    static func setFields(for record: CKRecord, from pantry: Pantry) {
+        record[Pantry.CodingKeys.name.rawValue] = pantry.name
+        record[Pantry.CodingKeys.ownerId.rawValue] = pantry.ownerId
+        record[Pantry.CodingKeys.shareReferenceId.rawValue] = pantry.shareReferenceId
+        record[Pantry.CodingKeys.isShared.rawValue] = pantry.isShared
+        record[Pantry.CodingKeys.zoneId.rawValue] = pantry.zoneId
+    }
+}
+
+
 struct ItemConverter: CloudKitConvertible {
     typealias ModelType = Item
 

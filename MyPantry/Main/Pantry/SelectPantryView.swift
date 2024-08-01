@@ -47,10 +47,17 @@ struct SelectPantryView: View {
             .navigationTitle("Select Pantry")
             .toolbar(content: {
                 ToolbarItem(placement: .primaryAction) {
-                    Button("Add Pantry") {
+                    Button(action: {
                         showCreatePantrySheet = true
-                    }
-                    .foregroundStyle(.primaryColor)
+                    }, label: {
+                        Label(
+                            title: { Text("Add Pantry") },
+                            icon: {
+                                Image(systemName: "plus.circle")
+                                    .foregroundStyle(.accent2Color, .accent1Color)
+                            }
+                        )
+                    })
                     .disabled(vm.isLoading)
                 }
             })

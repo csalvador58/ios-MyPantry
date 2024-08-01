@@ -113,10 +113,13 @@ struct PantryService: PantryServiceType {
             zoneId: zoneName
         )
         
-        let record = PantryConverter.toRecord(sharedPantry)
+        let recordID = CKRecord.ID(recordName: sharedPantry.id, zoneID: customZoneID)
+        let record = CKRecord(recordType: PantryConverter.recordType, recordID: recordID)
+        
+        PantryConverter.setFields(for: record, from: sharedPantry)
+        
         let savedRecord = try await privateDatabase.save(record)
         
-        // Fetch or create share zone
         let (share, _) = try await fetchOrCreateShare(for: customZone)
         
         guard let savedPantry = PantryConverter.fromRecord(savedRecord) else {

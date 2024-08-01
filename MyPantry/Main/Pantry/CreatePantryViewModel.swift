@@ -28,10 +28,21 @@ import SwiftUI
         }
         
         do {
-            let newPantry = try await pantryService.savePantry(
-                Pantry(name: name, ownerId: "", isShared: isShared),
-                isShared: isShared
-            )
+            let newPantry: Pantry
+            
+            if isShared {
+                let sharingInfo = try await pantryService.createSharedPantry(Pantry(name: name, ownerId: "", isShared: true))
+                newPantry = sharingInfo.pantry
+            } else {
+                newPantry = try await pantryService.savePantry(
+                    Pantry(
+                        name: name,
+                        ownerId: "",
+                        isShared: false
+                    ),
+                    isShared: false
+                )
+            }
             return newPantry
         } catch {
             self.error = error.localizedDescription
