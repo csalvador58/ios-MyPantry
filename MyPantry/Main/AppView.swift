@@ -38,14 +38,14 @@ struct AppView: View {
             )
         }
     }
-
+    
     private var mainView: some View {
         TabView {
             Text("Home View")
                 .tabItem {
                     Label("Home", systemImage: "house.fill")
                 }
-            Text("Pantry View")
+            PantryListView()
                 .tabItem {
                     Label("My Pantry", systemImage: "door.french.open")
                 }
@@ -60,7 +60,7 @@ struct AppView: View {
         }
         .withTheme()
     }
-
+    
     private var signInView: some View {
         VStack(spacing: 20) {
             Text("Welcome to My Pantry")
@@ -76,13 +76,13 @@ struct AppView: View {
                 if let url = URL(string: UIApplication.openSettingsURLString) {
                     UIApplication.shared.open(url)
                 }
-            }) {
+            }, label: {
                 Text("Sign In to iCloud")
                     .padding()
                     .background(Color.blue)
                     .foregroundColor(.white)
                     .cornerRadius(10)
-            }
+            })
             
             if !viewModel.error.isEmpty {
                 Text(viewModel.error)

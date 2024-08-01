@@ -59,10 +59,11 @@ struct PantryService: PantryServiceType {
         var allPantries: [Pantry] = []
         
         for zone in zones where zone.zoneID != CKRecordZone.default().zoneID {
-            let queryOperation = CKQueryOperation(query: CKQuery(recordType: PantryConverter.recordType, predicate: NSPredicate(value: true)))
+            let query = CKQuery(recordType: PantryConverter.recordType, predicate: NSPredicate(value: true))
+            let queryOperation = CKQueryOperation(query: query)
             queryOperation.zoneID = zone.zoneID
             
-            let (matchResults, _) = try await database.records(matching: queryOperation.query!, inZoneWith: zone.zoneID, desiredKeys: nil, resultsLimit: CKQueryOperation.maximumResults)
+            let (matchResults, _) = try await database.records(matching: query, inZoneWith: zone.zoneID, desiredKeys: nil, resultsLimit: CKQueryOperation.maximumResults)
             let pantries = matchResults.compactMap { try? PantryConverter.fromRecord($0.1.get()) }
             allPantries.append(contentsOf: pantries)
         }

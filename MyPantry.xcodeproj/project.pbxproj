@@ -20,6 +20,7 @@
 		B92D1DC12C4BB9930021C4D4 /* ListItemsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B92D1DC02C4BB9930021C4D4 /* ListItemsViewModel.swift */; };
 		B95E936C2C5B55E400CED5B0 /* PantryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B95E936B2C5B55E400CED5B0 /* PantryListView.swift */; };
 		B95E936E2C5B573E00CED5B0 /* PantryListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B95E936D2C5B573E00CED5B0 /* PantryListViewModel.swift */; };
+		B95E93702C5C199800CED5B0 /* CloudSharingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B95E936F2C5C199800CED5B0 /* CloudSharingView.swift */; };
 		B962F4392C503A3100F27159 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B962F4382C503A3100F27159 /* AppTheme.swift */; };
 		B962F43B2C503C1000F27159 /* ThemeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B962F43A2C503C1000F27159 /* ThemeModifier.swift */; };
 		B97D5DF82C4B8D3800E4C1F0 /* AddItemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B97D5DF72C4B8D3800E4C1F0 /* AddItemDetailView.swift */; };
@@ -59,6 +60,7 @@
 		B92D1DC02C4BB9930021C4D4 /* ListItemsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListItemsViewModel.swift; sourceTree = "<group>"; };
 		B95E936B2C5B55E400CED5B0 /* PantryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryListView.swift; sourceTree = "<group>"; };
 		B95E936D2C5B573E00CED5B0 /* PantryListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryListViewModel.swift; sourceTree = "<group>"; };
+		B95E936F2C5C199800CED5B0 /* CloudSharingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudSharingView.swift; sourceTree = "<group>"; };
 		B962F4382C503A3100F27159 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		B962F43A2C503C1000F27159 /* ThemeModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeModifier.swift; sourceTree = "<group>"; };
 		B97D5DF72C4B8D3800E4C1F0 /* AddItemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemDetailView.swift; sourceTree = "<group>"; };
@@ -178,6 +180,14 @@
 			path = ListItems;
 			sourceTree = "<group>";
 		};
+		B95E93712C5C19A000CED5B0 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B95E936F2C5C199800CED5B0 /* CloudSharingView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		B962F4372C503A1700F27159 /* Colors */ = {
 			isa = PBXGroup;
 			children = (
@@ -208,6 +218,7 @@
 		B9863F6D2C5B5510004BA97B /* Pantry */ = {
 			isa = PBXGroup;
 			children = (
+				B95E93712C5C19A000CED5B0 /* Views */,
 				B99CFFC92C51E762007BDB2C /* SelectPantryView.swift */,
 				B9CD52162C59696F001E4B59 /* SelectPantryViewModel.swift */,
 				B99CFFC42C518225007BDB2C /* CreatePantryView.swift */,
@@ -369,6 +380,7 @@
 				B97D5DF82C4B8D3800E4C1F0 /* AddItemDetailView.swift in Sources */,
 				B911619F2C473EDD005731E0 /* AddItemViewModel.swift in Sources */,
 				B91161842C47262D005731E0 /* MyPantryApp.swift in Sources */,
+				B95E93702C5C199800CED5B0 /* CloudSharingView.swift in Sources */,
 				B95E936E2C5B573E00CED5B0 /* PantryListViewModel.swift in Sources */,
 				B92D1DC12C4BB9930021C4D4 /* ListItemsViewModel.swift in Sources */,
 				B9CFB0BC2C478E6200178D8A /* Config.swift in Sources */,
