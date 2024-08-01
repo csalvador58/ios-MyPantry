@@ -66,7 +66,13 @@ struct SelectPantryView: View {
             Text(vm.error ?? "An unknown error occurred")
         })
         .sheet(isPresented: $showCreatePantrySheet, content: {
-            Text("Create Pantry View")
+            CreatePantryView { newPantry in
+                Task {
+                    await vm.loadPantries()
+                    selectedPantryId = newPantry.id
+                }
+                
+            }
         })
         .withTheme()
     }

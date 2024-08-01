@@ -3,132 +3,88 @@
 //  Created by Chris Salvador on 2024
 //  SWD Creative Labs
 //
-import CloudKit
 import Models
 import SwiftUI
 import UIKit
 
-@MainActor
-struct CreatePantryView<ViewModel: CreatePantryViewModel>: View {
-    @State var viewModel: ViewModel
+struct CreatePantryView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var isCreating = false
-    @State private var errorMessage: String?
-    @State private var sharePresented = false
-    @State private var shareItem: CKShare?
-
-    var onComplete: ((Pantry) -> Void)?
-
-    init(viewModel: ViewModel, onComplete: ((Pantry) -> Void)? = nil) {
-        _viewModel = State(initialValue: viewModel)
-        self.onComplete = onComplete
+    @Environment(\.pantryService) private var pantryService
+    @State private var vm: CreatePantryViewModel
+    let onCreate: (Pantry) -> Void
+    
+    init(onCreate: @escaping (Pantry) -> Void) {
+        _vm = State(initialValue: CreatePantryViewModel())
+        self.onCreate = onCreate
     }
-
+    
     var body: some View {
-        NavigationView {
+        NavigationStack {
             Form {
                 Section(header: Text("Pantry Details")) {
-                    TextField("Pantry Name", text: $viewModel.name)
+                    TextField("Pantry Name", text: $vm.name)
                 }
-
+                
                 Section(header: Text("Sharing")) {
-                    Toggle("Share this pantry", isOn: $viewModel.isShared)
+                    Toggle("Share Pantry", isOn: $vm.isShared)
                 }
-
+                
                 Section {
-                    Button(action: createPantry) {
-                        if isCreating {
+                    Button(action: createPantry, label: {
+                        if vm.isCreating {
                             ProgressView()
-                                .frame(maxWidth: .infinity, minHeight: 20, alignment: .center)
+                                .frame(maxWidth: .infinity)
                         } else {
                             Text("Create Pantry")
-                                .frame(maxWidth: .infinity, minHeight: 20, alignment: .center)
+                                .frame(maxWidth: .infinity)
                         }
-                    }
-                    .disabled(viewModel.name.isEmpty)
+                    })
+                    .disabled(vm.name.isEmpty || vm.isCreating)
                     .padding()
-                    .background(viewModel.name.isEmpty ? .backgroundColor : .primaryColor)
-                    .foregroundStyle(viewModel.name.isEmpty ? .accent1Color : .white)
-                    .cornerRadius(8)
+                    .background(vm.name.isEmpty ? Color.secondaryColor : Color.primaryColor)
+                    .foregroundStyle(.adaptiveButtonTextColor)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
             }
             .navigationTitle("Create New Pantry")
-            .alert("Error", isPresented: Binding<Bool>.constant(errorMessage != nil)) {
-                Button("OK") { errorMessage = nil }
-            } message: {
-                Text(errorMessage ?? "An unknown error occurred")
-            }
-            .sheet(isPresented: $sharePresented) {
-                if let shareItem = shareItem {
-                    CloudSharingView(share: shareItem, container: CKContainer.default(), pantry: viewModel.name)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar(content: {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                    .foregroundStyle(.primaryColor)
                 }
-            }
-            .withTheme()
+            })
         }
+        .alert("Error", isPresented: .constant(vm.error != nil), actions: {
+            Button("OK") { vm.error = nil }
+        }, message: {
+            Text(vm.error ?? "An unknown error occurred")
+        })
+        .withTheme()
     }
-
+    
     private func createPantry() {
-        isCreating = true
         Task {
             do {
-                let newPantry = try await viewModel.createPantry()
-                if viewModel.isShared, let shareReference = newPantry.shareReference {
-                    do {
-                        let record = try await CKContainer.default().privateCloudDatabase.record(for: shareReference.recordID)
-                        if let share = record as? CKShare {
-                            shareItem = share
-                            sharePresented = true
-                        } else {
-                            throw NSError(domain: "PantryError", code: 2, userInfo: [NSLocalizedDescriptionKey: "Retrieved record is not a CKShare"])
-                        }
-                    } catch {
-                        throw NSError(domain: "PantryError", code: 3, userInfo: [NSLocalizedDescriptionKey: "Failed to retrieve share: \(error.localizedDescription)"])
-                    }
-                }
+                let newPantry = try await vm.createPantry()
+                onCreate(newPantry)
                 dismiss()
             } catch {
-                errorMessage = error.localizedDescription
+                // Error is already handled in view model
             }
-            isCreating = false
         }
     }
 }
 
-struct CloudSharingView: UIViewControllerRepresentable {
-    let share: CKShare
-    let container: CKContainer
-    let pantry: String
-
-    func makeUIViewController(context: Context) -> UICloudSharingController {
-        let controller = UICloudSharingController(share: share, container: container)
-        controller.delegate = context.coordinator
-        controller.availablePermissions = [.allowReadWrite, .allowPrivate]
-        return controller
-    }
-
-    func updateUIViewController(_: UICloudSharingController, context _: Context) {}
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
-    }
-
-    class Coordinator: NSObject, UICloudSharingControllerDelegate {
-        var parent: CloudSharingView
-
-        init(_ parent: CloudSharingView) {
-            self.parent = parent
-        }
-
-        func cloudSharingController(_: UICloudSharingController, failedToSaveShareWithError error: Error) {
-            print("Failed to save share: \(error.localizedDescription)")
-        }
-
-        func itemTitle(for _: UICloudSharingController) -> String? {
-            return parent.pantry
-        }
-    }
+#Preview("Light Mode") {
+    CreatePantryView { _ in }
+        .withTheme()
 }
 
-#Preview {
-    CreatePantryView(viewModel: MockCreatePantryViewModel())
+#Preview("Dark Mode") {
+    CreatePantryView { _ in }
+        .withTheme()
+        .preferredColorScheme(.dark)
 }

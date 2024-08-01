@@ -4,50 +4,46 @@
 //  SWD Creative Labs
 //
 
-import CloudKit
 import Models
 import SwiftUI
 
-@MainActor
-@Observable
-class CreatePantryViewModel {
+@Observable class CreatePantryViewModel {
     var name: String = ""
     var isShared: Bool = false
+    var isCreating: Bool = false
+    var error: String?
 
-    private let container = CKContainer.default()
-
+    private let pantryService: PantryServiceType
+    
+    init(pantryService: PantryServiceType = PantryService()) {
+        self.pantryService = pantryService
+    }
+    
     func createPantry() async throws -> Pantry {
-        let ownerId = try await container.userRecordID().recordName
-        var newPantry = Pantry(name: name, ownerId: ownerId, isShared: isShared)
-        let record = newPantry.toRecord()
-
-        if isShared {
-            let share = CKShare(rootRecord: record)
-            share[CKShare.SystemFieldKey.title] = name
-
-            let (savedRecords, _) = try await container.privateCloudDatabase.modifyRecords(saving: [record, share], deleting: [])
-
-            if case let .success(savedRecord) = savedRecords[record.recordID],
-               case let .success(savedShare) = savedRecords[share.recordID]
-            {
-                newPantry = Pantry.fromRecord(savedRecord)!
-                newPantry.shareReference = CKRecord.Reference(record: savedShare, action: .none)
-            } else {
-                throw NSError(domain: "PantryError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to save shared pantry"])
-            }
-        } else {
-            let savedRecord = try await container.privateCloudDatabase.save(record)
-            newPantry = Pantry.fromRecord(savedRecord)!
+        isCreating = true
+        error = nil
+        
+        defer {
+            isCreating = false
         }
-
-        return newPantry
+        
+        do {
+            let newPantry = try await pantryService.savePantry(
+                Pantry(name: name, ownerId: "", isShared: isShared),
+                isShared: isShared
+            )
+            return newPantry
+        } catch {
+            self.error = error.localizedDescription
+            throw error
+        }
     }
 }
 
-class MockCreatePantryViewModel: CreatePantryViewModel {
-    override func createPantry() async throws -> Pantry {
-        // Simulate network delay
-        try await Task.sleep(nanoseconds: 1_000_000_000)
-        return Pantry(id: CKRecord.ID(recordName: "mock"), name: name, ownerId: "mockOwner", isShared: isShared)
-    }
-}
+//class MockCreatePantryViewModel: CreatePantryViewModel {
+//    override func createPantry() async throws -> Pantry {
+//        // Simulate network delay
+//        try await Task.sleep(nanoseconds: 1_000_000_000)
+//        return Pantry(id: "mock", name: name, ownerId: "mockOwner", isShared: isShared)
+//    }
+//}
