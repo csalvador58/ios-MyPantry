@@ -1,18 +1,18 @@
 import Models
 import SwiftUI
 
+@MainActor
 @Observable class AppViewModel: @unchecked Sendable {
-    var ckService: CloudKitServiceType
+    nonisolated var ckService: CloudKitServiceType
     var isSignedInToiCloud: Bool = false
     var error: String = ""
     var userRecordId: String?
     var cachedICloudUserIdBinding: Binding<String?>?
     
-    init(cloudKitService: CloudKitServiceType = CloudKitService()) {
+    nonisolated init(cloudKitService: CloudKitServiceType = CloudKitService()) {
         self.ckService = cloudKitService
     }
     
-    @MainActor
     func getiCloudStatus() async {
         do {
             try await ckService.verifyiCloudAvailability()
@@ -40,7 +40,6 @@ class MockAppViewModel: AppViewModel {
         }
     }
     
-    @MainActor
     override func getiCloudStatus() async {
         // The status is already set in setup, so we don't need to do anything here
     }

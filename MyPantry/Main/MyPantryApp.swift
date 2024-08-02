@@ -18,6 +18,7 @@ struct MyPantryApp: App {
             AppView()
                 .environment(\.privateItemManager, ItemManager(databaseType: .privateDB))
                 .environment(\.sharedItemManager, ItemManager(databaseType: .sharedDB))
+                .environment(\.pantryService, PantryService(containerIdentifier: Config.containerIdentifier))
         }
         .handlesExternalEvents(matching: [/*your URL schemes here*/])
     }

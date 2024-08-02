@@ -7,6 +7,7 @@ import Models
 import SwiftUI
 import UIKit
 
+@MainActor
 struct CreatePantryView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.pantryService) private var pantryService

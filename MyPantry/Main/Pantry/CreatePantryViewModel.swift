@@ -7,6 +7,7 @@
 import Models
 import SwiftUI
 
+@MainActor
 @Observable class CreatePantryViewModel {
     var name: String = ""
     var isShared: Bool = false

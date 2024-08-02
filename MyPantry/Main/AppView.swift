@@ -6,13 +6,14 @@
 import Models
 import SwiftUI
 
+@MainActor
 struct AppView: View {
     @State private var viewModel: AppViewModel
     
     @AppStorage("selectedPantryId") private var selectedPantryId: String?
     @AppStorage("cachedICloudUserId") private var cachedICloudUserId: String?
     
-    init(viewModel: AppViewModel = AppViewModel()) {
+    nonisolated init(viewModel: AppViewModel = AppViewModel()) {
         _viewModel = State(initialValue: viewModel)
     }
     
@@ -22,7 +23,7 @@ struct AppView: View {
                 if let pantryId = selectedPantryId, !pantryId.isEmpty {
                     mainView
                 } else {
-                    SelectPantryView()
+                    InitialPantryView()
                 }
             } else {
                 signInView

@@ -17,11 +17,12 @@ protocol CloudKitServiceType {
     func deleteRecord(withID recordID: CKRecord.ID) async throws
 }
 
+@MainActor
 struct CloudKitService: CloudKitServiceType {
     private let container: CKContainer
     private let privateDatabase: CKDatabase
     
-    init(containerIdentifier: String = CKContainer.default().containerIdentifier ?? "") {
+    nonisolated init(containerIdentifier: String = CKContainer.default().containerIdentifier ?? "") {
         self.container = CKContainer(identifier: containerIdentifier)
         self.privateDatabase = self.container.privateCloudDatabase
     }
@@ -73,7 +74,7 @@ struct CloudKitService: CloudKitServiceType {
         try await privateDatabase.save(record)
     }
     
-    func fetchRecords(ofType recordType: String, withPredicate predicate: NSPredicate) async throws -> [CKRecord] {
+    nonisolated func fetchRecords(ofType recordType: String, withPredicate predicate: NSPredicate) async throws -> [CKRecord] {
         let query = CKQuery(recordType: recordType, predicate: predicate)
         let (matchResults, _) = try await privateDatabase.records(matching: query)
         return matchResults.compactMap { try? $0.1.get() }

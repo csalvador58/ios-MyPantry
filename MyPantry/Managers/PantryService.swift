@@ -10,7 +10,7 @@ import Models
 import SwiftUI
 
 struct PantryServiceKey: EnvironmentKey {
-    static let defaultValue = PantryService()
+    nonisolated static let defaultValue = PantryService(containerIdentifier: Config.containerIdentifier)
 }
 
 extension EnvironmentValues {
@@ -34,13 +34,14 @@ protocol PantryServiceType {
     func acceptShareInvitation(metadata: CKShare.Metadata) async throws
 }
 
+@MainActor
 struct PantryService: PantryServiceType {
     private let container: CKContainer
     private let privateDatabase: CKDatabase
     private let sharedDatabase: CKDatabase
     private let sharedPantryPrefix = "SharedPantry"
     
-    init(containerIdentifier: String = Config.containerIdentifier) {
+    nonisolated init(containerIdentifier: String) {
         self.container = CKContainer(identifier: containerIdentifier)
         self.privateDatabase = container.privateCloudDatabase
         self.sharedDatabase = container.sharedCloudDatabase
@@ -214,5 +215,93 @@ struct PantryService: PantryServiceType {
         }
         
         return share.participants.map { $0.userIdentity }
+    }
+}
+
+class MockPantryService: PantryServiceType {
+    private var state: State
+    
+    struct State {
+        var privatePantries: [Pantry]
+        var sharedPantries: [Pantry]
+        var error: Error?
+        var mockUsers: [String: [CKUserIdentity]]
+    }
+    
+    init(privatePantries: [Pantry] = [],
+         sharedPantries: [Pantry] = [],
+         error: Error? = nil,
+         mockUsers: [String: [CKUserIdentity]] = [:]) {
+        self.state = State(
+            privatePantries: privatePantries,
+            sharedPantries: sharedPantries,
+            error: error,
+            mockUsers: mockUsers
+        )
+    }
+    
+    func fetchPantries() async throws -> (private: [Pantry], shared: [Pantry]) {
+        if let error = state.error {
+            throw error
+        }
+        return (state.privatePantries, state.sharedPantries)
+    }
+    
+    func savePantry(_ pantry: Pantry, isShared: Bool) async throws -> Pantry {
+        let newPantry = Pantry(
+            id: UUID().uuidString,
+            name: pantry.name,
+            ownerId: pantry.ownerId,
+            shareReferenceId: pantry.shareReferenceId,
+            isShared: isShared,
+            zoneId: pantry.zoneId
+        )
+        if isShared {
+            state.sharedPantries.append(newPantry)
+        } else {
+            state.privatePantries.append(newPantry)
+        }
+        return newPantry
+    }
+    
+    func updatePantry(_ pantry: Pantry) async throws -> Pantry {
+        if pantry.isShared {
+            if let index = state.sharedPantries.firstIndex(where: { $0.id == pantry.id }) {
+                state.sharedPantries[index] = pantry
+                return pantry
+            }
+        } else {
+            if let index = state.privatePantries.firstIndex(where: { $0.id == pantry.id }) {
+                state.privatePantries[index] = pantry
+                return pantry
+            }
+        }
+        throw PantryServiceError.failedToUpdatePantry
+    }
+    
+    func deletePantry(_ pantry: Pantry) async throws {
+        if pantry.isShared {
+            state.sharedPantries.removeAll { $0.id == pantry.id }
+        } else {
+            state.privatePantries.removeAll { $0.id == pantry.id }
+        }
+    }
+    
+    func createSharedPantry(_ pantry: Pantry) async throws -> SharingInfo {
+        let sharedPantry = Pantry(
+            id: UUID().uuidString,
+            name: pantry.name,
+            ownerId: pantry.ownerId,
+            shareReferenceId: UUID().uuidString,
+            isShared: true,
+            zoneId: "MockZone-\(UUID().uuidString)"
+        )
+        state.sharedPantries.append(sharedPantry)
+        let mockShare = CKShare(recordZoneID: CKRecordZone.ID(zoneName: sharedPantry.zoneId ?? ""))
+        return SharingInfo(pantry: sharedPantry, share: mockShare)
+    }
+    
+    func acceptShareInvitation(metadata: CKShare.Metadata) async throws {
+        // Simulate accepting a share invitation
     }
 }
