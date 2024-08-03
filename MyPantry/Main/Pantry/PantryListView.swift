@@ -19,7 +19,6 @@ struct PantryListView: View {
         _vm = Bindable(viewModel ?? PantryListViewModel(pantryService: PantryService(containerIdentifier: Config.containerIdentifier)))
     }
     
-    
     var body: some View {
         NavigationStack {
             Group {

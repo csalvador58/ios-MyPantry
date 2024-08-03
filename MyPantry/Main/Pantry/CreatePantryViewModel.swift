@@ -9,14 +9,13 @@ import SwiftUI
 
 @MainActor
 @Observable class CreatePantryViewModel {
+    private let pantryService: PantryServiceType
     var name: String = ""
     var isShared: Bool = false
     var isCreating: Bool = false
     var error: String?
-
-    private let pantryService: PantryServiceType
     
-    init(pantryService: PantryServiceType = PantryService()) {
+    init(pantryService: PantryServiceType) {
         self.pantryService = pantryService
     }
     

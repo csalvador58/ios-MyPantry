@@ -3,13 +3,13 @@ import SwiftUI
 
 @MainActor
 @Observable class AppViewModel: @unchecked Sendable {
-    nonisolated var ckService: CloudKitServiceType
+    private let ckService: CloudKitServiceType
     var isSignedInToiCloud: Bool = false
     var error: String = ""
     var userRecordId: String?
     var cachedICloudUserIdBinding: Binding<String?>?
     
-    nonisolated init(cloudKitService: CloudKitServiceType = CloudKitService()) {
+    init(cloudKitService: CloudKitServiceType) {
         self.ckService = cloudKitService
     }
     

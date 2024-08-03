@@ -11,11 +11,11 @@ import UIKit
 struct CreatePantryView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.pantryService) private var pantryService
-    @State private var vm: CreatePantryViewModel
+    @Bindable private var vm: CreatePantryViewModel
     let onCreate: (Pantry) -> Void
     
     init(onCreate: @escaping (Pantry) -> Void) {
-        _vm = State(initialValue: CreatePantryViewModel())
+        _vm = Bindable(CreatePantryViewModel(pantryService: PantryService(containerIdentifier: Config.containerIdentifier)))
         self.onCreate = onCreate
     }
     

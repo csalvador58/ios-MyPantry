@@ -8,18 +8,18 @@ import SwiftUI
 
 @MainActor
 struct AppView: View {
-    @State private var viewModel: AppViewModel
+    @Bindable private var vm: AppViewModel
     
     @AppStorage("selectedPantryId") private var selectedPantryId: String?
     @AppStorage("cachedICloudUserId") private var cachedICloudUserId: String?
     
-    nonisolated init(viewModel: AppViewModel = AppViewModel()) {
-        _viewModel = State(initialValue: viewModel)
+    init(viewModel: AppViewModel? = nil) {
+        _vm = Bindable(viewModel ?? AppViewModel(cloudKitService: CloudKitService(containerIdentifier: Config.containerIdentifier)))
     }
     
     var body: some View {
         Group {
-            if viewModel.isSignedInToiCloud {
+            if vm.isSignedInToiCloud {
                 if let pantryId = selectedPantryId, !pantryId.isEmpty {
                     mainView
                 } else {
@@ -30,10 +30,10 @@ struct AppView: View {
             }
         }
         .task {
-            await viewModel.getiCloudStatus()
+            await vm.getiCloudStatus()
         }
         .onAppear {
-            viewModel.cachedICloudUserIdBinding = Binding(
+            vm.cachedICloudUserIdBinding = Binding(
                 get: { cachedICloudUserId },
                 set: { cachedICloudUserId = $0 }
             )
@@ -85,8 +85,8 @@ struct AppView: View {
                     .cornerRadius(10)
             })
             
-            if !viewModel.error.isEmpty {
-                Text(viewModel.error)
+            if !vm.error.isEmpty {
+                Text(vm.error)
                     .foregroundColor(.red)
                     .padding()
             }

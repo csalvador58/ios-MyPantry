@@ -57,7 +57,6 @@ extension PantryConverter {
     }
 }
 
-
 struct ItemConverter: CloudKitConvertible {
     typealias ModelType = Item
 
