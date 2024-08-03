@@ -10,11 +10,11 @@ import Models
 import SwiftUI
 
 struct PantryServiceKey: EnvironmentKey {
-    nonisolated static let defaultValue = PantryService(containerIdentifier: Config.containerIdentifier)
+    nonisolated static let defaultValue: PantryServiceType = PantryService(containerIdentifier: Config.containerIdentifier)
 }
 
 extension EnvironmentValues {
-    var pantryService: PantryService {
+    var pantryService: PantryServiceType {
         get { self[PantryServiceKey.self] }
         set { self[PantryServiceKey.self] = newValue }
     }
@@ -218,90 +218,57 @@ struct PantryService: PantryServiceType {
     }
 }
 
-class MockPantryService: PantryServiceType {
-    private var state: State
+struct MockPantryService: PantryServiceType {
+    var privatePantries: [Pantry]
+    var sharedPantries: [Pantry]
+    var isLoading: Bool
+    var error: String?
     
-    struct State {
-        var privatePantries: [Pantry]
-        var sharedPantries: [Pantry]
-        var error: Error?
-        var mockUsers: [String: [CKUserIdentity]]
-    }
-    
-    init(privatePantries: [Pantry] = [],
-         sharedPantries: [Pantry] = [],
-         error: Error? = nil,
-         mockUsers: [String: [CKUserIdentity]] = [:]) {
-        self.state = State(
-            privatePantries: privatePantries,
-            sharedPantries: sharedPantries,
-            error: error,
-            mockUsers: mockUsers
-        )
+    init(privatePantries: [Pantry] = [], sharedPantries: [Pantry] = [], isLoading: Bool = false, error: String? = nil) {
+        self.privatePantries = privatePantries
+        self.sharedPantries = sharedPantries
+        self.isLoading = isLoading
+        self.error = error
     }
     
     func fetchPantries() async throws -> (private: [Pantry], shared: [Pantry]) {
-        if let error = state.error {
-            throw error
+        if let error = error {
+            throw NSError(domain: "MockPantryService", code: 0, userInfo: [NSLocalizedDescriptionKey: error])
         }
-        return (state.privatePantries, state.sharedPantries)
+        return (private: privatePantries, shared: sharedPantries)
     }
     
     func savePantry(_ pantry: Pantry, isShared: Bool) async throws -> Pantry {
-        let newPantry = Pantry(
-            id: UUID().uuidString,
-            name: pantry.name,
-            ownerId: pantry.ownerId,
-            shareReferenceId: pantry.shareReferenceId,
-            isShared: isShared,
-            zoneId: pantry.zoneId
-        )
-        if isShared {
-            state.sharedPantries.append(newPantry)
-        } else {
-            state.privatePantries.append(newPantry)
+        if let error = error {
+            throw NSError(domain: "MockPantryService", code: 0, userInfo: [NSLocalizedDescriptionKey: error])
         }
-        return newPantry
+        return pantry
     }
     
     func updatePantry(_ pantry: Pantry) async throws -> Pantry {
-        if pantry.isShared {
-            if let index = state.sharedPantries.firstIndex(where: { $0.id == pantry.id }) {
-                state.sharedPantries[index] = pantry
-                return pantry
-            }
-        } else {
-            if let index = state.privatePantries.firstIndex(where: { $0.id == pantry.id }) {
-                state.privatePantries[index] = pantry
-                return pantry
-            }
+        if let error = error {
+            throw NSError(domain: "MockPantryService", code: 0, userInfo: [NSLocalizedDescriptionKey: error])
         }
-        throw PantryServiceError.failedToUpdatePantry
+        return pantry
     }
     
     func deletePantry(_ pantry: Pantry) async throws {
-        if pantry.isShared {
-            state.sharedPantries.removeAll { $0.id == pantry.id }
-        } else {
-            state.privatePantries.removeAll { $0.id == pantry.id }
+        if let error = error {
+            throw NSError(domain: "MockPantryService", code: 0, userInfo: [NSLocalizedDescriptionKey: error])
         }
     }
     
     func createSharedPantry(_ pantry: Pantry) async throws -> SharingInfo {
-        let sharedPantry = Pantry(
-            id: UUID().uuidString,
-            name: pantry.name,
-            ownerId: pantry.ownerId,
-            shareReferenceId: UUID().uuidString,
-            isShared: true,
-            zoneId: "MockZone-\(UUID().uuidString)"
-        )
-        state.sharedPantries.append(sharedPantry)
-        let mockShare = CKShare(recordZoneID: CKRecordZone.ID(zoneName: sharedPantry.zoneId ?? ""))
-        return SharingInfo(pantry: sharedPantry, share: mockShare)
+        if let error = error {
+            throw NSError(domain: "MockPantryService", code: 0, userInfo: [NSLocalizedDescriptionKey: error])
+        }
+        let mockShare = CKShare(rootRecord: CKRecord(recordType: "MockPantry"))
+        return SharingInfo(pantry: pantry, share: mockShare)
     }
     
     func acceptShareInvitation(metadata: CKShare.Metadata) async throws {
-        // Simulate accepting a share invitation
+        if let error = error {
+            throw NSError(domain: "MockPantryService", code: 0, userInfo: [NSLocalizedDescriptionKey: error])
+        }
     }
 }
