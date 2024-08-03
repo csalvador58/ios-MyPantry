@@ -6,14 +6,15 @@
 import SwiftUI
 import Models
 
+@MainActor
 struct SelectPantryView: View {
     @Environment(\.pantryService) private var pantryService
-    @State private var vm: SelectPantryViewModel
+    @Bindable private var vm: SelectPantryViewModel
     @State private var showCreatePantrySheet = false
     @AppStorage("selectedPantryId") private var selectedPantryId: String?
     
-    init(viewModel: SelectPantryViewModel = SelectPantryViewModel()) {
-        _vm = State(initialValue: viewModel)
+    init(viewModel: SelectPantryViewModel? = nil) {
+        _vm = Bindable(viewModel ?? SelectPantryViewModel(pantryService: PantryService(containerIdentifier: Config.containerIdentifier)))
     }
     
     var body: some View {
@@ -122,48 +123,51 @@ struct SelectPantryView: View {
 }
 
 #Preview("With Pantries (Light)") {
-    let mockVM = MockSelectPantryViewModel()
-    mockVM.privatePantries = [
-        Pantry(id: "1", name: "My Pantry", ownerId: "user1", isShared: false),
-        Pantry(id: "2", name: "Kitchen", ownerId: "user1", isShared: false)
-    ]
-    mockVM.sharedPantries = [
-        Pantry(id: "3", name: "Family Pantry", ownerId: "user2", isShared: true)
-    ]
-    return SelectPantryView(viewModel: mockVM)
+    let mockService = MockPantryService(
+        privatePantries: [
+            Pantry(id: "1", name: "My Pantry", ownerId: "user1", isShared: false),
+            Pantry(id: "2", name: "Kitchen", ownerId: "user1", isShared: false)
+        ],
+        sharedPantries: [
+            Pantry(id: "3", name: "Family Pantry", ownerId: "user2", isShared: true)
+        ],
+        isLoading: false
+    )
+    return SelectPantryView(viewModel: SelectPantryViewModel(pantryService: mockService))
         .withTheme()
         .preferredColorScheme(.light)
 }
 
 #Preview("With Pantries (Dark)") {
-    let mockVM = MockSelectPantryViewModel()
-    mockVM.privatePantries = [
-        Pantry(id: "1", name: "My Pantry", ownerId: "user1", isShared: false),
-        Pantry(id: "2", name: "Kitchen", ownerId: "user1", isShared: false)
-    ]
-    mockVM.sharedPantries = [
-        Pantry(id: "3", name: "Family Pantry", ownerId: "user2", isShared: true)
-    ]
-    return SelectPantryView(viewModel: mockVM)
+    let mockService = MockPantryService(
+        privatePantries: [
+            Pantry(id: "1", name: "My Pantry", ownerId: "user1", isShared: false),
+            Pantry(id: "2", name: "Kitchen", ownerId: "user1", isShared: false)
+        ],
+        sharedPantries: [
+            Pantry(id: "3", name: "Family Pantry", ownerId: "user2", isShared: true)
+        ],
+        isLoading: false
+    )
+    return SelectPantryView(viewModel: SelectPantryViewModel(pantryService: mockService))
         .withTheme()
         .preferredColorScheme(.dark)
 }
 
 #Preview("Loading") {
-    let mockVM = MockSelectPantryViewModel()
-    mockVM.isLoading = true
-    return SelectPantryView(viewModel: mockVM)
+    let mockService = MockPantryService(isLoading: true)
+    return SelectPantryView(viewModel: SelectPantryViewModel(pantryService: mockService))
         .withTheme()
 }
 
 #Preview("No Pantries") {
-    SelectPantryView(viewModel: MockSelectPantryViewModel())
+    let mockService = MockPantryService()
+    return SelectPantryView(viewModel: SelectPantryViewModel(pantryService: mockService))
         .withTheme()
 }
 
 #Preview("Error") {
-    let mockVM = MockSelectPantryViewModel()
-    mockVM.error = "Failed to load pantries"
-    return SelectPantryView(viewModel: mockVM)
+    let mockService = MockPantryService(error: "Failed to load pantries")
+    return SelectPantryView(viewModel: SelectPantryViewModel(pantryService: mockService))
         .withTheme()
 }
