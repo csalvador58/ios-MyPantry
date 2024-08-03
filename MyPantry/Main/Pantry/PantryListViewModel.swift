@@ -3,17 +3,19 @@
 //  Created by Chris Salvador on 2024
 //  SWD Creative Labs
 //
+import Foundation
 import Models
 import SwiftUI
 
+@MainActor
 @Observable class PantryListViewModel {
-    var pantries: [Pantry] = []
+    private let pantryService: PantryServiceType
+    var privatePantries: [Pantry] = []
+    var sharedPantries: [Pantry] = []
     var isLoading = false
     var error: String?
     
-    private let pantryService: PantryServiceType
-    
-    init(pantryService: PantryServiceType = PantryService()) {
+    init(pantryService: PantryServiceType) {
         self.pantryService = pantryService
     }
     
@@ -21,17 +23,52 @@ import SwiftUI
         isLoading = true
         error = nil
         
+        defer { isLoading = false }
+        
         do {
             let (privatePantries, sharedPantries) = try await pantryService.fetchPantries()
-            await MainActor.run {
-                self.pantries = privatePantries + sharedPantries
-                self.isLoading = false
+            self.privatePantries = privatePantries
+            self.sharedPantries = sharedPantries
+        } catch {
+            self.error = error.localizedDescription
+        }
+    }
+    
+    func createPantry(_ pantry: Pantry) async throws {
+        isLoading = true
+        error = nil
+        
+        defer { isLoading = false }
+        
+        do {
+            let newPantry = try await pantryService.savePantry(pantry, isShared: pantry.isShared)
+            if pantry.isShared {
+                sharedPantries.append(newPantry)
+            } else {
+                privatePantries.append(newPantry)
             }
         } catch {
-            await MainActor.run {
-                self.error = error.localizedDescription
-                self.isLoading = false
+            self.error = error.localizedDescription
+            throw error
+        }
+    }
+    
+    func sharePantry(_ pantry: Pantry) async throws -> SharingInfo {
+        isLoading = true
+        error = nil
+        
+        defer { isLoading = false }
+        
+        do {
+            let sharingInfo = try await pantryService.createSharedPantry(pantry)
+            if let index = privatePantries.firstIndex(where: { $0.id == pantry.id }) {
+                privatePantries.remove(at: index)
+                sharedPantries.append(sharingInfo.pantry)
             }
+            return sharingInfo
+        } catch {
+            self.error = error.localizedDescription
+            throw error
         }
     }
 }

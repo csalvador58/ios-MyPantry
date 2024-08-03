@@ -6,38 +6,38 @@
 import SwiftUI
 import Models
 
+@MainActor
 struct PantryListView: View {
-    @State private var vm: PantryListViewModel
+    @Environment(\.pantryService) private var pantryService
+    @Bindable private var vm: PantryListViewModel
     @State private var sharingPantry: Pantry?
     @State private var isShowingShareSheet = false
+    @State private var showCreatePantrySheet = false
+    @AppStorage("selectedPantryId") private var selectedPantryId: String?
     
-    init(viewModel: PantryListViewModel = PantryListViewModel()) {
-        _vm = State(initialValue: viewModel)
+    init(viewModel: PantryListViewModel? = nil) {
+        _vm = Bindable(viewModel ?? PantryListViewModel(pantryService: PantryService(containerIdentifier: Config.containerIdentifier)))
     }
+    
     
     var body: some View {
         NavigationStack {
             Group {
                 if vm.isLoading {
                     ProgressView("Loading pantries...")
-                } else if let error = vm.error {
-                    Text("Error: \(error)")
-                } else if vm.pantries.isEmpty {
+                } else if vm.privatePantries.isEmpty && vm.sharedPantries.isEmpty {
                     Text("No pantries found. Create one to get started!")
                 } else {
-                    List(vm.pantries) { pantry in
-                        HStack {
-                            Text(pantry.name)
-                            Spacer()
-                            if pantry.isShared {
-                                Image(systemName: "person.2.fill")
-                                    .foregroundColor(.blue)
-                            } else {
-                                Button("Share") {
-                                    sharingPantry = pantry
-                                    isShowingShareSheet = true
-                                }
-                                .buttonStyle(.borderedProminent)
+                    List {
+                        Section("Private Pantries") {
+                            ForEach(vm.privatePantries) { pantry in
+                                pantryRow(pantry)
+                            }
+                        }
+                        
+                        Section("Shared Pantries") {
+                            ForEach(vm.sharedPantries) { pantry in
+                                pantryRow(pantry)
                             }
                         }
                     }
@@ -47,7 +47,7 @@ struct PantryListView: View {
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button(action: {
-                        // TODO: Action to create a new pantry
+                        showCreatePantrySheet = true
                     }, label: {
                         Image(systemName: "plus")
                     })
@@ -59,37 +59,77 @@ struct PantryListView: View {
         }
         .sheet(isPresented: $isShowingShareSheet) {
             if let pantry = sharingPantry {
-//                SharePantryView(pantry: pantry)
-                Text("SharePantryView")
+                SharePantryView(pantry: pantry)
             }
+        }
+        .sheet(isPresented: $showCreatePantrySheet) {
+            CreatePantryView { newPantry in
+                Task {
+                    await vm.loadPantries()
+                }
+            }
+        }
+        .alert("Error", isPresented: .constant(vm.error != nil), actions: {
+            Button("OK") { vm.error = nil }
+        }, message: {
+            Text(vm.error ?? "An unknown error occurred")
+        })
+    }
+    
+    private func pantryRow(_ pantry: Pantry) -> some View {
+        HStack {
+            Text(pantry.name)
+                .foregroundStyle(pantry.id == selectedPantryId ? .primaryColor : .adaptiveTextColor)
+            Spacer()
+            if pantry.isShared {
+                Image(systemName: "person.2.fill")
+                    .foregroundStyle(.accent1Color)
+            } else {
+                Button("Share") {
+                    sharingPantry = pantry
+                    isShowingShareSheet = true
+                }
+            }
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            selectedPantryId = pantry.id
         }
     }
 }
 
-#Preview("PantryListView") {
-    let mockViewModel = PantryListViewModel()
-    mockViewModel.pantries = [
-        Pantry(id: "1", name: "Kitchen", ownerId: "user1", isShared: false),
-        Pantry(id: "2", name: "Basement", ownerId: "user1", isShared: true),
-        Pantry(id: "3", name: "Garage", ownerId: "user1", isShared: false)
-    ]
-    return PantryListView(viewModel: mockViewModel)
+#Preview("PantryListView - With Pantries") {
+    let mockService = MockPantryService(
+        privatePantries: [
+            Pantry(id: "1", name: "Kitchen", ownerId: "user1", isShared: false),
+            Pantry(id: "3", name: "Garage", ownerId: "user1", isShared: false)
+        ],
+        sharedPantries: [
+            Pantry(id: "2", name: "Basement", ownerId: "user1", isShared: true)
+        ]
+    )
+    return PantryListView()
+        .environment(\.pantryService, mockService)
+        .withTheme()
 }
 
 #Preview("PantryListView - Loading") {
-    let mockViewModel = PantryListViewModel()
-    mockViewModel.isLoading = true
-    return PantryListView(viewModel: mockViewModel)
+    let mockService = MockPantryService(isLoading: true)
+    return PantryListView()
+        .environment(\.pantryService, mockService)
+        .withTheme()
 }
 
 #Preview("PantryListView - Error") {
-    let mockViewModel = PantryListViewModel()
-    mockViewModel.error = "Failed to load pantries"
-    return PantryListView(viewModel: mockViewModel)
+    let mockService = MockPantryService(error: "Failed to load pantries")
+    return PantryListView()
+        .environment(\.pantryService, mockService)
+        .withTheme()
 }
 
 #Preview("PantryListView - Empty") {
-    let mockViewModel = PantryListViewModel()
-    mockViewModel.pantries = []
-    return PantryListView(viewModel: mockViewModel)
+    let mockService = MockPantryService()
+    return PantryListView()
+        .environment(\.pantryService, mockService)
+        .withTheme()
 }
