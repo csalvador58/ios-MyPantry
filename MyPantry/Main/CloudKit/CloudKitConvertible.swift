@@ -53,10 +53,15 @@ extension PantryConverter {
         record[Pantry.CodingKeys.ownerId.rawValue] = pantry.ownerId
         record[Pantry.CodingKeys.shareReferenceId.rawValue] = pantry.shareReferenceId
         record[Pantry.CodingKeys.isShared.rawValue] = pantry.isShared
-        record[Pantry.CodingKeys.zoneId.rawValue] = pantry.zoneId
+        
+        // Set zoneId, using a default if it's nil
+        let zoneId = pantry.zoneId ?? "SharedPantry-\(pantry.id)"
+        record[Pantry.CodingKeys.zoneId.rawValue] = zoneId
+        
+        print("Setting fields for pantry: \(pantry.id)")
+        print("zoneId set to: \(zoneId)")
     }
 }
-
 struct ItemConverter: CloudKitConvertible {
     typealias ModelType = Item
 

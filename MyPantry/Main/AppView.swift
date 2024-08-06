@@ -24,6 +24,7 @@ struct AppView: View {
                     mainView
                 } else {
                     InitialPantryView()
+
                 }
             } else {
                 signInView
@@ -46,7 +47,7 @@ struct AppView: View {
                 .tabItem {
                     Label("Home", systemImage: "house.fill")
                 }
-            PantryListView()
+            PantryView()
                 .tabItem {
                     Label("My Pantry", systemImage: "door.french.open")
                 }

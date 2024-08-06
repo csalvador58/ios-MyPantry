@@ -31,6 +31,7 @@ protocol PantryServiceType {
     func updatePantry(_ pantry: Pantry) async throws -> Pantry
     func deletePantry(_ pantry: Pantry) async throws
     func createSharedPantry(_ pantry: Pantry) async throws -> SharingInfo
+    func fetchExistingShare(for pantry: Pantry) async throws -> SharingInfo
     func acceptShareInvitation(metadata: CKShare.Metadata) async throws
 }
 
@@ -99,52 +100,134 @@ struct PantryService: PantryServiceType {
     }
     
     func createSharedPantry(_ pantry: Pantry) async throws -> SharingInfo {
+        print("Creating shared pantry for: \(pantry)")
         let zoneName = "\(sharedPantryPrefix)-\(pantry.id)"
         let customZoneID = CKRecordZone.ID(zoneName: zoneName)
         let customZone = CKRecordZone(zoneID: customZoneID)
         
-        // Ensure the zone exists
-        try await privateDatabase.save(customZone)
-        
-        let sharedPantry = Pantry(
-            id: pantry.id,
-            name: pantry.name,
-            ownerId: pantry.ownerId,
-            shareReferenceId: pantry.shareReferenceId,
-            isShared: true,
-            zoneId: zoneName
-        )
-        
-        let recordID = CKRecord.ID(recordName: sharedPantry.id, zoneID: customZoneID)
-        let record = CKRecord(recordType: PantryConverter.recordType, recordID: recordID)
-        
-        PantryConverter.setFields(for: record, from: sharedPantry)
-        
-        let savedRecord = try await privateDatabase.save(record)
-        
-        let (share, _) = try await fetchOrCreateShare(for: customZone)
-        
-        guard let savedPantry = PantryConverter.fromRecord(savedRecord) else {
-            throw PantryServiceError.failedToCreateSharedPantry
+        // Ensure zone exists
+        do {
+            try await privateDatabase.save(customZone)
+        } catch let error as CKError {
+            if error.code == .zoneNotFound {
+                do {
+                    try await privateDatabase.save(customZone)
+                } catch {
+                    print("Error saving custom zone: \(error)")
+                    throw PantryServiceError.failedToCreateSharedPantry
+                }
+            } else if error.code != .zoneBusy {
+                print("Error saving custom zone: \(error)")
+                throw PantryServiceError.failedToCreateSharedPantry
+            }
         }
         
-        return SharingInfo(pantry: savedPantry, share: share)
+        let recordID = CKRecord.ID(recordName: pantry.id, zoneID: customZoneID)
+        
+        do {
+            // Try to fetch the existing record
+            let existingRecord = try await privateDatabase.record(for: recordID)
+            print("Found existing record, updating it")
+            
+            // Update the existing record
+            PantryConverter.setFields(for: existingRecord, from: pantry)
+            let updatedRecord = try await privateDatabase.save(existingRecord)
+            
+            let (share, _) = try await fetchOrCreateShare(for: customZone)
+            
+            guard let updatedPantry = PantryConverter.fromRecord(updatedRecord) else {
+                print("Failed to convert updated record to Pantry")
+                throw PantryServiceError.failedToCreateSharedPantry
+            }
+            
+            return SharingInfo(pantry: updatedPantry, share: share)
+        } catch let error as CKError where error.code == .unknownItem {
+            print("Record doesn't exist, creating a new one")
+            
+            // Create a new record
+            let newRecord = CKRecord(recordType: PantryConverter.recordType, recordID: recordID)
+            PantryConverter.setFields(for: newRecord, from: pantry)
+            
+            do {
+                let savedRecord = try await privateDatabase.save(newRecord)
+                let (share, _) = try await fetchOrCreateShare(for: customZone)
+                
+                guard let savedPantry = PantryConverter.fromRecord(savedRecord) else {
+                    print("Failed to convert saved record to Pantry")
+                    throw PantryServiceError.failedToCreateSharedPantry
+                }
+                
+                return SharingInfo(pantry: savedPantry, share: share)
+            } catch {
+                print("Error saving new shared pantry record: \(error)")
+                throw PantryServiceError.failedToCreateSharedPantry
+            }
+        } catch {
+            print("Error fetching or saving shared pantry record: \(error)")
+            throw PantryServiceError.failedToCreateSharedPantry
+        }
     }
     
     private func fetchOrCreateShare(for zone: CKRecordZone) async throws -> (CKShare, CKContainer) {
         if let existingShare = zone.share {
-            guard let share = try await privateDatabase.record(for: existingShare.recordID) as? CKShare else {
+            do {
+                guard let share = try await privateDatabase.record(for: existingShare.recordID) as? CKShare else {
+                    print("Failed to cast fetched record to CKShare")
+                    throw PantryServiceError.failedToFetchShare
+                }
+                return (share, container)
+            } catch {
+                print("Error fetching existing share: \(error)")
+                throw PantryServiceError.failedToFetchShare
+            }
+        } else {
+            do {
+                let share = CKShare(recordZoneID: zone.zoneID)
+                share[CKShare.SystemFieldKey.title] = "Shared Pantry: \(zone.zoneID.zoneName)"
+                _ = try await privateDatabase.modifyRecords(saving: [share], deleting: [])
+                return (share, container)
+            } catch {
+                print("Error creating new share: \(error)")
                 throw PantryServiceError.failedToCreateSharedPantry
             }
-            return (share, container)
-        } else {
-            let share = CKShare(recordZoneID: zone.zoneID)
-            share[CKShare.SystemFieldKey.title] = "Shared Pantry: \(zone.zoneID.zoneName)"
-            _ = try await privateDatabase.modifyRecords(saving: [share], deleting: [])
-            return (share, container)
         }
     }
     
+    func fetchExistingShare(for pantry: Pantry) async throws -> SharingInfo {
+        print("Fetching existing share for pantry: \(pantry)")
+        guard let zoneId = pantry.zoneId else {
+            print("Invalid pantry zone: zoneId is nil")
+            throw PantryServiceError.invalidPantryZone
+        }
+        
+        let customZoneID = CKRecordZone.ID(zoneName: zoneId)
+        let customZone = CKRecordZone(zoneID: customZoneID)
+        
+        if let existingShare = customZone.share {
+            do {
+                guard let share = try await privateDatabase.record(for: existingShare.recordID) as? CKShare else {
+                    print("Failed to cast fetched record to CKShare")
+                    throw PantryServiceError.failedToFetchShare
+                }
+                
+                // Fetch the pantry record to ensure the latest data
+                let recordID = CKRecord.ID(recordName: pantry.id, zoneID: customZoneID)
+                let record = try await privateDatabase.record(for: recordID)
+                
+                // Update the pantry with the latest data from the server
+                let updatedPantry = PantryConverter.fromRecord(record) ?? pantry
+                
+                return SharingInfo(pantry: updatedPantry, share: share)
+            } catch {
+                print("Error fetching share: \(error)")
+                throw PantryServiceError.failedToFetchShare
+            }
+        } else {
+            print("No existing share found for zone: \(zoneId)")
+            throw PantryServiceError.failedToFetchShare
+        }
+    }
+        
     func acceptShareInvitation(metadata: CKShare.Metadata) async throws {
         let operation = CKAcceptSharesOperation(shareMetadatas: [metadata])
         
@@ -259,6 +342,14 @@ struct MockPantryService: PantryServiceType {
     }
     
     func createSharedPantry(_ pantry: Pantry) async throws -> SharingInfo {
+        if let error = error {
+            throw NSError(domain: "MockPantryService", code: 0, userInfo: [NSLocalizedDescriptionKey: error])
+        }
+        let mockShare = CKShare(rootRecord: CKRecord(recordType: "MockPantry"))
+        return SharingInfo(pantry: pantry, share: mockShare)
+    }
+    
+    func fetchExistingShare(for pantry: Pantry) async throws -> SharingInfo {
         if let error = error {
             throw NSError(domain: "MockPantryService", code: 0, userInfo: [NSLocalizedDescriptionKey: error])
         }

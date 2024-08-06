@@ -6,9 +6,9 @@
 import Foundation
 import Models
 import SwiftUI
-
+ 
 @MainActor
-@Observable class PantryListViewModel {
+@Observable class PantryViewModel {
     private let pantryService: PantryServiceType
     var privatePantries: [Pantry] = []
     var sharedPantries: [Pantry] = []
@@ -29,8 +29,13 @@ import SwiftUI
             let (privatePantries, sharedPantries) = try await pantryService.fetchPantries()
             self.privatePantries = privatePantries
             self.sharedPantries = sharedPantries
+            
+            print("Loaded private pantries: \(privatePantries.map { "\($0.name) (isShared: \($0.isShared))" })")
+            print("Loaded shared pantries: \(sharedPantries.map { "\($0.name) (isShared: \($0.isShared))" })")
         } catch {
             self.error = error.localizedDescription
+            
+            print("Error loading pantries: \(error)")
         }
     }
     
