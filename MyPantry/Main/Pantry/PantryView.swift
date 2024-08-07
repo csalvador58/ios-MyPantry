@@ -13,37 +13,41 @@ struct PantryView: View {
     @Environment(\.pantryService) private var pantryService
     @Bindable private var vm: PantryViewModel
     
-    init(viewModel: PantryViewModel? = nil) {
-        _vm = Bindable(viewModel ?? PantryViewModel(pantryService: PantryService(containerIdentifier: Config.containerIdentifier)))
+    init() {
+        _vm = Bindable(PantryViewModel(pantryService: PantryService(containerIdentifier: Config.containerIdentifier)))
     }
     
     var body: some View {
         NavigationStack {
             Group {
                 if vm.isLoading {
-                    ProgressView("Loading pantries...")
+                    VStack {
+                        ProgressView("Loading pantries...")
+                    }
                 } else if vm.createdPantries.isEmpty && vm.invitedPantries.isEmpty {
                     Text("No pantries found. Create one to get started!")
                 } else {
                     List {
                         Section("Created") {
                             ForEach(vm.createdPantries) { pantry in
-                                PantryRowView(pantry: pantry, vm: vm) {
-                                    vm.selectedPantry = pantry
-                                    Task {
-                                        await vm.initiateSharing(for: pantry)
+                                PantryRowView(pantry: pantry)
+                                    .onTapGesture {
+                                        vm.selectedPantry = pantry
+                                        Task {
+                                            await vm.initiateSharing(for: pantry)
+                                        }
                                     }
-                                }
                             }
                         }
                         
-//                        Section("Invited") {
-//                            ForEach(vm.invitedPantries) { pantry in
-//                                PantryRowView(pantry: pantry, vm: vm) {
-//                                    vm.selectedPantry = pantry
-//                                }
-//                            }
-//                        }
+                        Section("Invited") {
+                            ForEach(vm.invitedPantries) { pantry in
+                                PantryRowView(pantry: pantry)
+                                    .onTapGesture {
+                                        vm.selectedPantry = pantry
+                                    }
+                            }
+                        }
                     }
                 }
             }
@@ -87,20 +91,19 @@ struct PantryView: View {
     }
 }
 
+@MainActor
 struct PantryRowView: View {
     let pantry: Pantry
-    let vm: PantryViewModel
     @AppStorage("selectedPantryId") private var selectedPantryId: String?
     
-    init(pantry: Pantry, vm: PantryViewModel) {
+    init(pantry: Pantry) {
         self.pantry = pantry
-        self.vm = vm
     }
     
     var body: some View {
         HStack {
             Text(pantry.name)
-                .foregroundStyle(pantry.id == selectedPantryId ? .primaryColor : .adaptiveTextColor)
+                .foregroundStyle(pantry.id == selectedPantryId ? Color.primaryColor : Color.adaptiveTextColor)
                 .frame(maxWidth: .infinity, alignment: .leading)
             if pantry.isShared {
                 Image(systemName: "person.2.fill")
@@ -108,44 +111,9 @@ struct PantryRowView: View {
             }
         }
         .contentShape(Rectangle())
-        .onTapGesture {
-            selectedPantryId = pantry.id
-        }
     }
 }
 
-//    private func pantryRow(_ pantry: Pantry) -> some View {
-//        HStack {
-//            Text(pantry.name)
-//                .foregroundStyle(pantry.id == selectedPantryId ? .primaryColor : .adaptiveTextColor)
-//                .frame(maxWidth: .infinity, alignment: .leading)
-//
-//            if pantry.isShared {
-//                Image(systemName: "person.2.fill")
-//                    .foregroundColor(.green)
-//            } else {
-//                Button(action: {
-//                    logger.info("Share button tapped for Pantry: \(pantry.id)")
-//                    sharingPantry = pantry
-//                }, label: {
-//                    Text("Share")
-//                        .padding(.horizontal, 12)
-//                        .padding(.vertical, 6)
-//                        .background(Color.blue)
-//                        .foregroundColor(.white)
-//                        .cornerRadius(8)
-//                })
-//                .buttonStyle(PlainButtonStyle())
-//            }
-//        }
-//        .contentShape(Rectangle())
-//        .onTapGesture {
-//            logger.info("Pantry selected: \(pantry.id)")
-//            selectedPantryId = pantry.id
-//        }
-//    }
-//}
-//
 //#Preview("PantryListView - With Pantries") {
 //    let mockService = MockPantryService(
 //        privatePantries: [
