@@ -34,14 +34,7 @@ import SwiftUI
                 let sharingInfo = try await pantryService.createSharedPantry(Pantry(name: name, ownerId: "", isShared: true))
                 newPantry = sharingInfo.pantry
             } else {
-                newPantry = try await pantryService.savePantry(
-                    Pantry(
-                        name: name,
-                        ownerId: "",
-                        isShared: false
-                    ),
-                    isShared: false
-                )
+                newPantry = try await pantryService.createPrivatePantry(Pantry(name: name, ownerId: "", isShared: false))
             }
             return newPantry
         } catch {

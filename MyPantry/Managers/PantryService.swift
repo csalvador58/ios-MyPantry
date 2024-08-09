@@ -27,7 +27,7 @@ struct SharingInfo {
 
 protocol PantryServiceType {
     func fetchPantries() async throws -> (private: [Pantry], shared: [Pantry])
-    func savePantry(_ pantry: Pantry, isShared: Bool) async throws -> Pantry
+    func createPrivatePantry(_ pantry: Pantry) async throws -> Pantry
     func updatePantry(_ pantry: Pantry) async throws -> Pantry
     func deletePantry(_ pantry: Pantry) async throws
     func createSharedPantry(_ pantry: Pantry) async throws -> SharingInfo
@@ -41,6 +41,7 @@ struct PantryService: PantryServiceType {
     private let privateDatabase: CKDatabase
     private let sharedDatabase: CKDatabase
     private let sharedPantryPrefix = "SharedPantry"
+    private let privatePantryPrefix = "PrivatePantry"
     
     nonisolated init(containerIdentifier: String) {
         self.container = CKContainer(identifier: containerIdentifier)
@@ -73,16 +74,6 @@ struct PantryService: PantryServiceType {
         return allPantries
     }
     
-    func savePantry(_ pantry: Pantry, isShared: Bool) async throws -> Pantry {
-        let record = PantryConverter.toRecord(pantry)
-        let database = isShared ? sharedDatabase : privateDatabase
-        let savedRecord = try await database.save(record)
-        guard let savedPantry = PantryConverter.fromRecord(savedRecord) else {
-            throw PantryServiceError.failedToSavePantry
-        }
-        return savedPantry
-    }
-    
     func updatePantry(_ pantry: Pantry) async throws -> Pantry {
         let record = PantryConverter.toRecord(pantry)
         let database = pantry.isShared ? sharedDatabase : privateDatabase
@@ -99,6 +90,44 @@ struct PantryService: PantryServiceType {
         try await database.deleteRecord(withID: record.recordID)
     }
     
+    func createPrivatePantry(_ pantry: Pantry) async throws -> Pantry {
+        print("Creating private pantry for: \(pantry)")
+        let zoneName = "\(privatePantryPrefix)-\(pantry.id)"
+        let customZoneID = CKRecordZone.ID(zoneName: zoneName)
+        let customZone = CKRecordZone(zoneID: customZoneID)
+        
+        do {
+            try await privateDatabase.save(customZone)
+        } catch let error as CKError {
+            switch error.code {
+            case .zoneNotFound:
+                do {
+                    try await privateDatabase.save(customZone)
+                } catch {
+                    print("Error saving custom zone: \(error)")
+                    throw PantryServiceError.failedToCreatePrivatePantry
+                }
+            case .zoneBusy:
+                print("Zone is busy, proceeding with pantry creation")
+            default:
+                print("Error saving custom zone: \(error)")
+                throw PantryServiceError.failedToCreatePrivatePantry
+            }
+        }
+        
+        do {
+            let record = PantryConverter.toRecord(pantry)
+            let savedRecord = try await privateDatabase.save(record)
+            guard let savedPantry = PantryConverter.fromRecord(savedRecord) else {
+                throw PantryServiceError.failedToSavePantry
+            }
+            return savedPantry
+        } catch {
+            print("Error saving private pantry record: \(error)")
+            throw PantryServiceError.failedToSavePantry
+        }
+    }
+    
     func createSharedPantry(_ pantry: Pantry) async throws -> SharingInfo {
         print("Creating shared pantry for: \(pantry)")
         let zoneName = "\(sharedPantryPrefix)-\(pantry.id)"
@@ -109,14 +138,17 @@ struct PantryService: PantryServiceType {
         do {
             try await privateDatabase.save(customZone)
         } catch let error as CKError {
-            if error.code == .zoneNotFound {
+            switch error.code {
+            case .zoneNotFound:
                 do {
                     try await privateDatabase.save(customZone)
                 } catch {
                     print("Error saving custom zone: \(error)")
                     throw PantryServiceError.failedToCreateSharedPantry
                 }
-            } else if error.code != .zoneBusy {
+            case .zoneBusy:
+                print("Zone busy")
+            default:
                 print("Error saving custom zone: \(error)")
                 throw PantryServiceError.failedToCreateSharedPantry
             }
@@ -321,7 +353,7 @@ struct MockPantryService: PantryServiceType {
         return (private: privatePantries, shared: sharedPantries)
     }
     
-    func savePantry(_ pantry: Pantry, isShared: Bool) async throws -> Pantry {
+    func createPrivatePantry(_ pantry: Pantry) async throws -> Pantry {
         if let error = error {
             throw NSError(domain: "MockPantryService", code: 0, userInfo: [NSLocalizedDescriptionKey: error])
         }

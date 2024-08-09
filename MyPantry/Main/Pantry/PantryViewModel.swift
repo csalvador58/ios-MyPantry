@@ -64,7 +64,7 @@ import os
 //        defer { isLoading = false }
 //        
 //        do {
-//            let newPantry = try await pantryService.savePantry(pantry, isShared: pantry.isShared)
+//            let newPantry = try await pantryService.createPrivatePantry(pantry, isShared: pantry.isShared)
 //            if pantry.isShared {
 //                sharedPantries.append(newPantry)
 //            } else {
